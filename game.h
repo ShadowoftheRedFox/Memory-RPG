@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HEADER_GAME
+#define HEADER_GAME 1
 
 #include "./defines.h"
 
@@ -66,3 +67,4 @@ void map_reset(Board_Case **map);
 void map_print();
 //  move the current player
 void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon);
+#endif

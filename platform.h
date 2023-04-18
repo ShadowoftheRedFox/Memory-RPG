@@ -1,4 +1,6 @@
-#pragma once
+#ifndef HEADER_PLATFORM
+#define HEADER_PLATFORM 1
+
 #include "./defines.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,3 +22,4 @@ void *platform_set_memory(void *dest, i32 value, u64 size);
 void platform_sleep(u64 ms);
 
 void platform_srand();
+#endif
