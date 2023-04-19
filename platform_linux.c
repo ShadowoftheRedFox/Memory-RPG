@@ -1,6 +1,6 @@
+#ifdef PLATFORM_LINUX
 #include "./platform.h"
 
-#ifdef PLATFORM_LINUX
 #if _POSIX_C_SOURCE >= 199309L
 #include <time.h> // nanosleep
 #else
@@ -34,24 +34,87 @@ void platform_console_clean() {
     }
 }
 
-void platform_color_change_red() {
-    printf("\033[31m");
-}
-void platform_color_change_blue() {
-    printf("\033[34m");
-}
-void platform_color_change_reset() {
-    printf("\033[0m");
+void platform_color_change(Case_Color font, Case_Color back) {
+    // back color
+    u8 back = 0;
+    switch (back) {
+    case COLOR_RED:
+        back = 41;
+        break;
+    case COLOR_GREEN:
+        back = 42;
+        break;
+    case COLOR_BLUE:
+        back = 44;
+        break;
+    case COLOR_PINK:
+        back = 45;
+        break;
+    case COLOR_YELLOW:
+        back = 43;
+        break;
+    case COLOR_CYAN:
+        back = 46;
+        break;
+    case COLOR_WHITE:
+        back = 47;
+        break;
+    case COLOR_BLACK:
+        back = 40;
+        break;
+    case COLOR_EMPTY:
+        // Specify this one to just pass color, and not make a case for empty cases
+        // back at 0 already
+        break;
+    default:
+        // it's all existing color
+        break;
+    }
+
+    // font color
+    switch (color) {
+    case COLOR_RED:
+        printf("\033[31;1;%dm", back);
+        break;
+    case COLOR_GREEN:
+        printf("\033[32;1;%dm", back);
+        break;
+    case COLOR_BLUE:
+        printf("\033[34;1;%dm", back);
+        break;
+    case COLOR_PINK:
+        printf("\033[35;1;%dm", back);
+        break;
+    case COLOR_YELLOW:
+        printf("\033[33;1;%dm", back);
+        break;
+    case COLOR_CYAN:
+        printf("\033[36;1;%dm", back);
+        break;
+    case COLOR_WHITE:
+        printf("\033[37;1;%dm", back);
+        break;
+    case COLOR_BLACK:
+        printf("\033[30;1;%dm", back);
+        break;
+    case COLOR_EMPTY:
+        // Specify this one to just pass color, and not make a case for empty cases
+        printf("\033[%dm", back);
+        break;
+    default:
+        // it's all existing color
+        break;
+    }
 }
 
-void *platform_allocate(u64 size, b8 aligned) {
+void *platform_allocate(u64 size) {
     void *r = malloc(size);
     if (r == NULL) {
         printf("malloc failed");
         exit(1);
     }
 }
-void platform_free(void *block, b8 aligned) {
+void platform_free(void *block) {
     free(block);
 }
 void *platform_zero_memory(void *block, u64 size) {

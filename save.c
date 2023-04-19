@@ -16,7 +16,7 @@ b8 remove_save() {
     return remove(SAVE_FILE_NAME);
 }
 
-b8 save_game(Board_Case **map, Case_Type turn, Choosen_Weapon weapon) {
+b8 save_game(Board_Case **map, Case_Type turn, Choosen_Weapon weapon, u8 treasure_found, b8 artifact_found) {
     // create the file handle
     FILE *save_file = fopen(SAVE_FILE_NAME, "wb");
     if (save_file == NULL) {
@@ -46,7 +46,7 @@ b8 save_game(Board_Case **map, Case_Type turn, Choosen_Weapon weapon) {
     return true;
 }
 
-b8 load_game(Board_Case ***map, Case_Type *turn, Choosen_Weapon *weapon) {
+b8 load_game(Board_Case ***map, Case_Type *turn, Choosen_Weapon *weapon, u8 *treasure_found, b8 *artifact_found) {
     // create the file handle
     FILE *save_file = fopen(SAVE_FILE_NAME, "rb");
     if (save_file == NULL) {

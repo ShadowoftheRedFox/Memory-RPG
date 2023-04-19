@@ -9,10 +9,15 @@ int main(int argc, char const *argv[]) {
     // setup variables
     b8 game_running = true;
     u8 confirm;
+
+    // create game variables
     Case_Type turn = PLAYER_BLUE;
+    Board_Case **map = map_create();
 
     while (game_running) {
         // show the board
+
+        map_print(map);
 
         scanf("%c", &confirm);
         if (confirm != '\n') {

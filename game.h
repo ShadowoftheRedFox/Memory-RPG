@@ -23,6 +23,8 @@ typedef enum Case_Type {
     CASE_OBJECT_TREASURE,
     CASE_OBJECT_PORTAL,
     CASE_OBJECT_TOTEM,
+
+    // type of artifacts
     CASE_OBJECT_STAFF,
     CASE_OBJECT_DAGGER,
     CASE_OBJECT_GRIMOIRE,
@@ -40,6 +42,16 @@ typedef enum Case_Type {
     PLAYER_WHITE,
     PLAYER_YELLOW
 } Case_Type;
+
+typedef enum Case_Color {
+    COLOR_EMPTY,
+    COLOR_BLUE,
+    COLOR_YELLOW,
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_WHITE,
+    COLOR_ORANGE
+} Case_Color;
 
 typedef enum Choosen_Weapon {
     WEAPON_TORCH,
@@ -64,7 +76,9 @@ void map_destroy(Board_Case **map);
 // reset the map for a new player round
 void map_reset(Board_Case **map);
 // print the map
-void map_print();
+void map_print(Board_Case **map);
 //  move the current player
 void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon);
+// reveal the case
+void reveal_case(Board_Case **map);
 #endif

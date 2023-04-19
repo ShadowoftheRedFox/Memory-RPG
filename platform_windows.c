@@ -36,7 +36,11 @@ void platform_color_change_reset() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 }
 
-void *platform_allocate(u64 size, b8 aligned) {
+void platform_color_change(Case_Color font, Case_Color back) {
+    // TODO or maybe not
+}
+
+void *platform_allocate(u64 size) {
     void *r = malloc(size);
     if (r == NULL) {
         printf("malloc failed");
@@ -45,7 +49,7 @@ void *platform_allocate(u64 size, b8 aligned) {
     return r;
 }
 
-void platform_free(void *block, b8 aligned) {
+void platform_free(void *block) {
     free(block);
 }
 
