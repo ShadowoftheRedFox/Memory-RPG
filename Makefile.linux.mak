@@ -30,9 +30,8 @@ objdir:
 
 # delete bin then obj dirrectory, with all files in it
 clean: 
-	if exist $(BUILD_DIR)\$(EXECNAME) del $(BUILD_DIR)\$(EXECNAME)
-	if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
-	if exist $(OBJ_DIR) rmdir /s /q $(OBJ_DIR)
+	rmdir /s /q $(BUILD_DIR)
+	rmdir /s /q $(OBJ_DIR)
 
 # build o files
 $(OBJ_DIR)/%.o : %.c $(H_FILES) $(OBJ_DIR) # compile .c to .o object

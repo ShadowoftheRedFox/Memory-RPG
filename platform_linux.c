@@ -1,4 +1,4 @@
-#ifdef PLATFORM_LINUX
+#if defined(__linux__) || defined(__gnu_linux__)
 #include "./platform.h"
 #include <errno.h>
 
@@ -48,20 +48,11 @@ void platform_color_change(Case_Color font, Case_Color back) {
     case COLOR_BLUE:
         back = 44;
         break;
-    case COLOR_PINK:
-        back = 45;
-        break;
     case COLOR_YELLOW:
         back = 43;
         break;
-    case COLOR_CYAN:
-        back = 46;
-        break;
     case COLOR_WHITE:
         back = 47;
-        break;
-    case COLOR_BLACK:
-        back = 40;
         break;
     case COLOR_EMPTY:
         // Specify this one to just pass color, and not make a case for empty cases
@@ -83,20 +74,11 @@ void platform_color_change(Case_Color font, Case_Color back) {
     case COLOR_BLUE:
         printf("\033[34;1;%dm", back);
         break;
-    case COLOR_PINK:
-        printf("\033[35;1;%dm", back);
-        break;
     case COLOR_YELLOW:
         printf("\033[33;1;%dm", back);
         break;
-    case COLOR_CYAN:
-        printf("\033[36;1;%dm", back);
-        break;
     case COLOR_WHITE:
         printf("\033[37;1;%dm", back);
-        break;
-    case COLOR_BLACK:
-        printf("\033[30;1;%dm", back);
         break;
     case COLOR_EMPTY:
         // Specify this one to just pass color, and not make a case for empty cases

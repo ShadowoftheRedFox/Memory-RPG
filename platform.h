@@ -1,6 +1,10 @@
 #ifndef HEADER_PLATFORM
 #define HEADER_PLATFORM 1
 
+#if defined(__linux__) || defined(__gnu_linux__)
+#include <errno.h>
+#endif
+
 #include "./defines.h"
 #include "./game.h"
 #include <stdio.h>
