@@ -22,11 +22,11 @@ exec: $(OBJ_IN_DIR)
 
 # create bin directory
 buildir: 
-	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)
 
 # create obj directory
 objdir: 
-	if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)
 
 # delete bin then obj dirrectory, with all files in it
 clean: 

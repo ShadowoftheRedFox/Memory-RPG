@@ -1,5 +1,6 @@
 #ifdef PLATFORM_LINUX
 #include "./platform.h"
+#include <errno.h>
 
 #if _POSIX_C_SOURCE >= 199309L
 #include <time.h> // nanosleep
