@@ -19,6 +19,10 @@ int main(int argc, char const *argv[]) {
 
         map_print(map);
 
+        // TODO await player move
+
+        // TODO logic after the move
+
         scanf("%c", &confirm);
         if (confirm != '\n') {
             game_running = false;

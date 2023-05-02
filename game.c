@@ -20,6 +20,9 @@ Board_Case **map_create() {
         }
     }
 
+    // TEST----------------------
+    // printf("Map created\n");
+
     // kinda reset the map, well same as teh first setup
     map_reset(map);
 
@@ -32,52 +35,61 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
         return;
     }
 
+    // TEST----------------------
+    // printf("zero array\n");
+
     // array of empty cases
     // zero memory because zero will be exluded from cases
     u8 count = 0;
-    u8 array_y[MAP_SIZE - 2];
-    platform_zero_memory(array_y, sizeof(array_y));
-
-    u8 array_x[MAP_SIZE - 2];
-    platform_zero_memory(array_x, sizeof(array_x));
+    u8 array[MAP_SIZE - 2];
+    platform_zero_memory(array, sizeof(array));
 
     for (u8 y = 1; y < MAP_SIZE - 2; y++) {
         for (u8 x = 1; x < MAP_SIZE - 2; x++) {
             if (map[y][x].content == CASE_EMPTY) {
-                // TODO can space otimize using y * 10 + x
-                array_x[count] = x;
-                array_y[count] = y;
+                // optimize space by using y * 10 + x
+                array[count] = y * 10 + x;
                 count++;
             }
         }
     }
 
-    // get a random number between 0 and count
-    u8 rand_count = rand() % count;
-    u8 x = array_x[rand_count]; // our x coordinate
-    u8 y = array_y[rand_count]; // our y coordinate
+    // no empty case after count == 0?
+    if (count != 0) {
+        // TEST----------------------
+        // printf("after fetch coos: %d\n", count);
 
-    // and fill it accordingly
-    map[y][x].content = content;
+        // get a random number between 0 and count
+        u8 rand_count = rand() % count;
+        u8 x = array[rand_count] % 10; // our x coordinate
+        u8 y = array[rand_count] / 10; // our y coordinate
 
-    // then call again
-    // not really effective, but it does the work, and we are not focused on optimisation
-    content_randomizer(map, n - 1, content);
+        // and fill it accordingly
+        map[y][x].content = content;
+
+        // TEST----------------------
+        // printf("recursiv call randomizer\n");
+
+        // then call again
+        // not really effective, but it does the work, and we are not focused on optimisation
+        content_randomizer(map, n - 1, content);
+    }
 }
 
 // reset the map for a new player round
 void map_reset(Board_Case **map) {
+    // TEST----------------------
+    // printf("resetting map\n");
+
     // fill the map
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
             // our current case is map[y][x]
-            // TODO add player spawn
             if (y == 0 || x == 0 || x == MAP_SIZE - 1 || y == MAP_SIZE - 1) {
                 // case that are empty
                 map[y][x].empty = true;
             } else {
                 // case hidden
-                // TODO fill content
                 map[y][x].empty = false;
                 map[y][x].hidden = true;
             }
@@ -103,6 +115,9 @@ void map_reset(Board_Case **map) {
         }
     }
 
+    // TEST----------------------
+    // printf("randomisation\n");
+
     // randomisation of the map content
     // monsters
     content_randomizer(map, 4, CASE_MONSTER_BASILIC);
@@ -123,6 +138,9 @@ void map_reset(Board_Case **map) {
 
 // print the map
 void map_print(Board_Case **map) {
+    // TEST----------------------
+    // printf("printing\n");
+
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
             if (map[y][x].hidden) {
@@ -149,36 +167,53 @@ void map_print(Board_Case **map) {
 
                 // type of object
                 case CASE_OBJECT_TREASURE:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_PORTAL:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_TOTEM:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_STAFF:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_DAGGER:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_GRIMOIRE:
+                    printf("▧");
                     break;
                 case CASE_OBJECT_SWORD:
+                    printf("▧");
                     break;
 
                 // type of monster
                 case CASE_MONSTER_ZOMBIE:
+                    printf("▧");
                     break;
                 case CASE_MONSTER_HARPY:
+                    printf("▧");
                     break;
                 case CASE_MONSTER_BASILIC:
+                    printf("▧");
                     break;
                 case CASE_MONSTER_TROLL:
+                    printf("▧");
                     break;
 
                 // player turn here for simplification
                 case PLAYER_GREEN:
+                    printf("▧");
                     break;
                 case PLAYER_BLUE:
+                    printf("▧");
                     break;
                 case PLAYER_WHITE:
+                    printf("▧");
+                    break;
+                case PLAYER_YELLOW:
+                    printf("▧");
                     break;
 
                 default:
@@ -199,7 +234,7 @@ void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon) {
 }
 
 void map_destroy(Board_Case **map) {
-    // we alloc lines here
+    // we unalloc lines here
     for (u8 i = 0; i < MAP_SIZE; i++) {
         platform_free(map[i]);
     }
