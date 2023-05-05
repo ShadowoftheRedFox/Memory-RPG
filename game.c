@@ -5,19 +5,11 @@ Board_Case **map_create() {
     // here malloc(size); = platform_allocate(size);
     // we alloc columns here
     Board_Case **map = platform_allocate(MAP_SIZE * sizeof(Board_Case *));
-    // we test if malloc failed
-    if (map == NULL) {
-        printf("malloc failed.\nError: %d\n", errno);
-        exit(1);
-    }
+    // the test if malloc failed is in the function
 
     // we alloc lines here
     for (u8 i = 0; i < MAP_SIZE; i++) {
         map[i] = platform_allocate(MAP_SIZE * sizeof(Board_Case));
-        if (map[i] == NULL) {
-            printf("malloc failed.\nError: %d\n", errno);
-            exit(1);
-        }
     }
 
     // TEST----------------------
