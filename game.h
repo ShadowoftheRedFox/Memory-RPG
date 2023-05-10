@@ -70,6 +70,7 @@ typedef struct Board_Case {
     b8 empty;
     // content of the case
     Case_Type content;
+    Case_Type player;
 } Board_Case;
 
 // create the 2D array of the map
@@ -81,7 +82,7 @@ void map_reset(Board_Case **map);
 // print the map
 void map_print(Board_Case **map);
 //  move the current player
-void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon);
+void player_move(Board_Case **map, Case_Type turn);
 // reveal the case
 void reveal_case(Board_Case **map);
 void empty_stdin_buffer();

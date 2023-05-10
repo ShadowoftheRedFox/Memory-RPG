@@ -137,6 +137,11 @@ void map_print(Board_Case **map) {
                 printf("░░");
             } else if (map[y][x].empty) {
                 // empty case
+                if (y == 0) {
+                    printf("  ");
+                } else {
+                    printf(" ");
+                }
                 printf("  ");
             } else {
                 switch (map[y][x].content) {
@@ -219,7 +224,28 @@ void map_print(Board_Case **map) {
 }
 
 //  move the current player
-void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon) {
+void player_move(Board_Case **map, Case_Type turn) {
+    // Choose the direction
+    u32 choosen_direction;
+    u32 correct = 0;
+    do {
+        printf("Choose your path :");
+        correct = scanf("%d", &choosen_direction);
+        empty_stdin_buffer();
+        switch (choosen_direction) {
+        case 2: // down
+
+        case 4: // left
+
+        case 6: // right
+
+        case 8: // up
+
+        default:
+            printf("This is not a correct direction!\n");
+            break;
+        }
+    } while (correct != 1);
 }
 
 void map_destroy(Board_Case **map) {
