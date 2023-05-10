@@ -35,8 +35,8 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
     // array of empty cases
     // zero memory because zero will be exluded from cases
     u8 count = 0;
-    u8 array[MAP_SIZE - 2];
-    platform_zero_memory(array, sizeof(array));
+    u8 *array = platform_allocate(sizeof(u8) * MAP_SIZE);
+    platform_zero_memory(array, sizeof(u8) * MAP_SIZE);
 
     for (u8 y = 1; y < MAP_SIZE - 2; y++) {
         for (u8 x = 1; x < MAP_SIZE - 2; x++) {
@@ -61,6 +61,8 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
         // not really effective, but it does the work, and we are not focused on optimisation
         content_randomizer(map, n - 1, content);
     }
+
+    free(array);
 }
 
 // reset the map for a new player round

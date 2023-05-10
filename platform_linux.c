@@ -37,7 +37,6 @@ void platform_console_clean() {
 
 void platform_color_change(Case_Color font, Case_Color back) {
     // back color
-    u8 back = 0;
     switch (back) {
     case COLOR_RED:
         back = 41;
@@ -64,7 +63,7 @@ void platform_color_change(Case_Color font, Case_Color back) {
     }
 
     // font color
-    switch (color) {
+    switch (font) {
     case COLOR_RED:
         printf("\033[31;1;%dm", back);
         break;
