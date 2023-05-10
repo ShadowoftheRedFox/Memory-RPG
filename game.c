@@ -12,9 +12,6 @@ Board_Case **map_create() {
         map[i] = platform_allocate(MAP_SIZE * sizeof(Board_Case));
     }
 
-    // TEST----------------------
-    // printf("Map created\n");
-
     // kinda reset the map, well same as teh first setup
     map_reset(map);
 
@@ -22,14 +19,19 @@ Board_Case **map_create() {
 }
 
 void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_randomizer\n");
+        exit(2);
+    }
+    if (content >= TYPE_UNKNOWN || content < 0) {
+        printf("content is not the expected value: %d\n", content);
+        exit(1);
+    }
     // since it's recursiv, stop if n == 0
     if (n == 0) {
         return;
     }
-
-    // TEST----------------------
-    // printf("zero array\n");
-
     // array of empty cases
     // zero memory because zero will be exluded from cases
     u8 count = 0;
@@ -48,9 +50,6 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
 
     // no empty case after count == 0?
     if (count != 0) {
-        // TEST----------------------
-        // printf("after fetch coos: %d\n", count);
-
         // get a random number between 0 and count
         u8 rand_count = rand() % count;
         u8 x = array[rand_count] % 10; // our x coordinate
@@ -58,10 +57,6 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
 
         // and fill it accordingly
         map[y][x].content = content;
-
-        // TEST----------------------
-        // printf("recursiv call randomizer\n");
-
         // then call again
         // not really effective, but it does the work, and we are not focused on optimisation
         content_randomizer(map, n - 1, content);
@@ -70,9 +65,11 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
 
 // reset the map for a new player round
 void map_reset(Board_Case **map) {
-    // TEST----------------------
-    // printf("resetting map\n");
-
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_reset\n");
+        exit(2);
+    }
     // fill the map
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
@@ -106,10 +103,6 @@ void map_reset(Board_Case **map) {
             }
         }
     }
-
-    // TEST----------------------
-    // printf("randomisation\n");
-
     // randomisation of the map content
     // monsters
     content_randomizer(map, 4, CASE_MONSTER_BASILIC);
@@ -130,9 +123,11 @@ void map_reset(Board_Case **map) {
 
 // print the map
 void map_print(Board_Case **map) {
-    // TEST----------------------
-    // printf("printing\n");
-
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_print\n");
+        exit(2);
+    }
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
             if (map[y][x].hidden) {
@@ -226,6 +221,11 @@ void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon) {
 }
 
 void map_destroy(Board_Case **map) {
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_destroy\n");
+        exit(2);
+    }
     // we unalloc lines here
     for (u8 i = 0; i < MAP_SIZE; i++) {
         platform_free(map[i]);
@@ -235,4 +235,15 @@ void map_destroy(Board_Case **map) {
 
 // reveal the case
 void reveal_case(Board_Case **map) {
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_destroy\n");
+        exit(2);
+    }
+}
+
+void empty_stdin_buffer() {
+    while (getchar() != '\n') {
+        // empty the stdin buffer until we found the next next line
+    };
 }

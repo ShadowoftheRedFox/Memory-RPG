@@ -40,7 +40,10 @@ typedef enum Case_Type {
     PLAYER_GREEN,
     PLAYER_BLUE,
     PLAYER_WHITE,
-    PLAYER_YELLOW
+    PLAYER_YELLOW,
+
+    //  for errors
+    TYPE_UNKNOWN
 } Case_Type;
 
 typedef enum Case_Color {
@@ -81,4 +84,5 @@ void map_print(Board_Case **map);
 void player_move(Board_Case **map, Case_Type turn, Choosen_Weapon weapon);
 // reveal the case
 void reveal_case(Board_Case **map);
+void empty_stdin_buffer();
 #endif
