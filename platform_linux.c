@@ -1,6 +1,7 @@
 #if defined(__linux__) || defined(__gnu_linux__)
 #include "./platform.h"
 #include <errno.h>
+#include <string.h>
 
 #if _POSIX_C_SOURCE >= 199309L
 #include <time.h> // nanosleep
