@@ -17,7 +17,13 @@ b8 remove_save() {
 }
 
 b8 save_game(Board_Case **map, Case_Type turn, Choosen_Weapon weapon, u8 treasure_found, b8 artifact_found) {
-    // create the file handle
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on save_game\n");
+        exit(2);
+    }
+    // TODO check other parameters
+    //  create the file handle
     FILE *save_file = fopen(SAVE_FILE_NAME, "wb");
     if (save_file == NULL) {
         printf("Can't open file %s\nError code = %d\nAborting save.\n", SAVE_FILE_NAME, errno);
@@ -47,7 +53,17 @@ b8 save_game(Board_Case **map, Case_Type turn, Choosen_Weapon weapon, u8 treasur
 }
 
 b8 load_game(Board_Case ***map, Case_Type *turn, Choosen_Weapon *weapon, u8 *treasure_found, b8 *artifact_found) {
-    // create the file handle
+    // verify parameters
+    if (map == NULL) {
+        printf("Map is null on map_destroy\n");
+        exit(2);
+    }
+    if (turn == NULL) {
+        printf("turn is null on load_game\n");
+        exit(2);
+    }
+    // TODO check other parameters
+    //  create the file handle
     FILE *save_file = fopen(SAVE_FILE_NAME, "rb");
     if (save_file == NULL) {
         printf("Can't open file %s\nError code = %d\nAborting load.\n", SAVE_FILE_NAME, errno);
