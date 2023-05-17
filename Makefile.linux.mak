@@ -28,7 +28,7 @@ buildir:
 objdir: 
 	mkdir -p $(OBJ_DIR)
 
-# delete bin then obj dirrectory, with all files in it
+# delete bin then obj directory, with all files in it
 clean: 
 	rmdir /s /q $(BUILD_DIR)
 	rmdir /s /q $(OBJ_DIR)
