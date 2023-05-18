@@ -34,5 +34,5 @@ clean:
 	rmdir /s /q $(OBJ_DIR)
 
 # build o files
-$(OBJ_DIR)/%.o : %.c $(H_FILES) $(OBJ_DIR) # compile .c to .o object
+$(OBJ_DIR)/%.o : %.c $(OBJ_DIR) # compile .c to .o object
 	$(CC) -c $< -o $@
