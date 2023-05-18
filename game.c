@@ -207,6 +207,7 @@ void map_print(Board_Case **map) {
                     printf("▧");
                     break;
                 case PLAYER_YELLOW:
+                    // platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                     printf("▧");
                     break;
 
@@ -227,7 +228,24 @@ void map_print(Board_Case **map) {
 void player_move(Board_Case **map, Case_Type turn) {
     // Choose the direction
     u32 choosen_direction;
+    u32 player_position_x = -1;
+    u32 player_position_y = -1;
     u32 correct = 0;
+
+    // getting the player position
+    for (int y = 0; y < MAP_SIZE; y++) {
+        for (int x = 0; x < MAP_SIZE; x++) {
+            if (map[y][x].player == turn) {
+                player_position_x = x;
+                player_position_y = y;
+                break;
+            }
+        }
+        if (player_position_y == y) {
+            break;
+        }
+    }
+
     do {
         printf("Choose your path :");
         correct = scanf("%d", &choosen_direction);
