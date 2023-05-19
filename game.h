@@ -84,6 +84,9 @@ void map_print(Board_Case **map);
 //  move the current player
 void player_move(Board_Case **map, Case_Type turn);
 // reveal the case
-void reveal_case(Board_Case **map);
+void reveal_case(Board_Case **map, u32 y, u32 x);
+// check if the case is hidden or not
+u32 check_reveal(Board_Case **map, u32 y, u32 x);
+
 void empty_stdin_buffer();
 #endif

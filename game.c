@@ -147,53 +147,53 @@ void map_print(Board_Case **map) {
                 switch (map[y][x].content) {
                     // different type of player spawn
                 case CASE_SPAWN_GREEN:
-                    printf("▧");
+                    printf("⟏"); // warrior
                     break;
                 case CASE_SPAWN_BLUE:
-                    printf("▧");
+                    printf("⤅"); // ranger
                     break;
                 case CASE_SPAWN_WHITE:
-                    printf("▧");
+                    printf("⚿"); // thief
                     break;
                 case CASE_SPAWN_YELLOW:
-                    printf("▧");
+                    printf("⧋"); // wizard
                     break;
 
                 // type of object
                 case CASE_OBJECT_TREASURE:
-                    printf("▧");
+                    printf("﹩");
                     break;
                 case CASE_OBJECT_PORTAL:
-                    printf("▧");
+                    printf("⦿");
                     break;
                 case CASE_OBJECT_TOTEM:
-                    printf("▧");
+                    printf("🞖");
                     break;
                 case CASE_OBJECT_STAFF:
-                    printf("▧");
+                    printf("Ⳕ");
                     break;
                 case CASE_OBJECT_DAGGER:
-                    printf("▧");
+                    printf("𐃋");
                     break;
                 case CASE_OBJECT_GRIMOIRE:
-                    printf("▧");
+                    printf("🕮");
                     break;
                 case CASE_OBJECT_SWORD:
-                    printf("▧");
+                    printf("⚔");
                     break;
 
                 // type of monster
                 case CASE_MONSTER_ZOMBIE:
-                    printf("▧");
+                    printf("🕱");
                     break;
                 case CASE_MONSTER_HARPY:
-                    printf("▧");
+                    printf("⊛");
                     break;
                 case CASE_MONSTER_BASILIC:
-                    printf("▧");
+                    printf("𝧜"); // don't know if this one works
                     break;
                 case CASE_MONSTER_TROLL:
-                    printf("▧");
+                    printf("🧌"); // don't know if this one works
                     break;
 
                 // player turn here for simplification
@@ -252,13 +252,43 @@ void player_move(Board_Case **map, Case_Type turn) {
         empty_stdin_buffer();
         switch (choosen_direction) {
         case 2: // down
+            if (player_position_y >= 5 || player_position_x == 0 || player_position_x == 6) {
+                break;
+            }
+            if (check_reveal(map, player_position_y, player_position_x) == false) {
+                break;
+            }
+            reveal_case(map, player_position_y + 1, player_position_x);
+            player_position_y++;
 
         case 4: // left
+            if (player_position_x <= 1 || player_position_y == 0 || player_position_y == 6) {
+                break;
+            }
+            if (check_reveal(map, player_position_y, player_position_x) == false) {
+                break;
+            }
+            reveal_case(map, player_position_y, player_position_x - 1);
+            player_position_x--;
 
         case 6: // right
-
+            if (player_position_x >= 5 || player_position_y == 0 || player_position_y == 6) {
+                break;
+            }
+            if (check_reveal(map, player_position_y, player_position_x) == false) {
+                break;
+            }
+            reveal_case(map, player_position_y, player_position_x + 1);
+            player_position_x++;
         case 8: // up
-
+            if (player_position_y <= 1 || player_position_x == 0 || player_position_x == 6) {
+                break;
+            }
+            if (check_reveal(map, player_position_y, player_position_x) == false) {
+                break;
+            }
+            reveal_case(map, player_position_y - 1, player_position_x);
+            player_position_y--;
         default:
             printf("This is not a correct direction!\n");
             break;
@@ -280,11 +310,21 @@ void map_destroy(Board_Case **map) {
 }
 
 // reveal the case
-void reveal_case(Board_Case **map) {
+void reveal_case(Board_Case **map, u32 y, u32 x) {
     // verify parameters
     if (map == NULL) {
         printf("Map is null on map_destroy\n");
         exit(2);
+    }
+    map[y][x].hidden = false;
+}
+
+// check if the case is hidden or not
+u32 check_reveal(Board_Case **map, u32 y, u32 x) {
+    if (map[y][x].hidden == false) {
+        return false;
+    } else {
+        return true;
     }
 }
 
