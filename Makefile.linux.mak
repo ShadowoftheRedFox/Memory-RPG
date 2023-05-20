@@ -30,8 +30,8 @@ objdir:
 
 # delete bin then obj directory, with all files in it
 clean: 
-	rmdir /s /q $(BUILD_DIR)
-	rmdir /s /q $(OBJ_DIR)
+	rm -r $(BUILD_DIR)
+	rm -r $(OBJ_DIR)
 
 # build o files
 $(OBJ_DIR)/%.o : %.c $(OBJ_DIR) # compile .c to .o object
