@@ -199,7 +199,7 @@ void map_print(Board_Case **map) {
     // loop through every case
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
-            if (map[y][x].empty) {
+            if (map[y][x].empty && map[y][x].player == CASE_EMPTY) {
                 // empty case
                 if (y == 0) {
                     printf("  ");
@@ -401,7 +401,7 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
         (*player_position_y < MAP_SIZE - 1 && map[*player_position_y + 1][*player_position_x].hidden == false) &&
         (*player_position_x > 0 && map[*player_position_y][*player_position_x - 1].hidden == false) &&
         (*player_position_x < MAP_SIZE - 1 && map[*player_position_y][*player_position_x + 1].hidden == false)) {
-        printf("You can't move anywhere! This is the end of your turn.\n");
+        printf("You can't move anywhere!\n");
         // change turn and reset map
         game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         return;
@@ -418,7 +418,6 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
                 printf("You can't move down here!\n");
                 break;
             }
-
             *player_position_y += 1;
             map[*player_position_y][*player_position_x].hidden = false;
             map_print(map);
@@ -511,6 +510,8 @@ void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, 
     // the player move the player to the new coordinates
     *player_position_x = (case_input) % 10;
     *player_position_y = (case_input) / 10;
+    // hide the position you went on
+    map[*player_position_y][*player_position_x].hidden = false;
 
     // print the map
     map_print(map);
@@ -576,22 +577,22 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
                 *is_winner = true;
             } else {
                 printf("You found a treasure! Now find your artifact.\n");
-                map[*player_position_y][*player_position_x].empty = true;
+                move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *treasure_found += 1;
             }
         } else {
             printf("You found another treasure! Now find your artifact.\n");
-            map[*player_position_y][*player_position_x].empty = true;
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
             *treasure_found += 1;
         }
         break;
     case CASE_OBJECT_PORTAL:
         printf("You found a weird shiny portal and you step inside...\n");
-        map[*player_position_y][*player_position_x].empty = true;
+        move_player_image(map, *player_position_x, *player_position_y, *turn);
         *player_will_teleport = true;
         break;
     case CASE_OBJECT_TOTEM:
-        map[*player_position_y][*player_position_x].empty = true;
+        move_player_image(map, *player_position_x, *player_position_y, *turn);
         game_transmut(map);
         game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         break;
@@ -602,11 +603,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
                 *is_winner = true;
             } else {
                 printf("You found the control staff you seeked for! Now find a treasure.\n");
-                map[*player_position_y][*player_position_x].empty = true;
+                move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
             printf("You found the control staff, but that's not what you wanted. Continue your journey.\n");
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
     case CASE_OBJECT_DAGGER:
@@ -616,11 +618,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
                 *is_winner = true;
             } else {
                 printf("You found the dagger you seeked for! Now find a treasure.\n");
-                map[*player_position_y][*player_position_x].empty = true;
+                move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
             printf("You found the dagger, but that's not what you wanted. Continue your journey.\n");
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
     case CASE_OBJECT_GRIMOIRE:
@@ -630,11 +633,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
                 *is_winner = true;
             } else {
                 printf("You found the grimoire you seeked for! Now find a treasure.\n");
-                map[*player_position_y][*player_position_x].empty = true;
+                move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
             printf("You found the grimoire, but that's not what you wanted. Continue your journey.\n");
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
     case CASE_OBJECT_SWORD:
@@ -644,11 +648,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
                 *is_winner = true;
             } else {
                 printf("You found the sword you seeked for! Now find a treasure.\n");
-                map[*player_position_y][*player_position_x].empty = true;
+                move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
             printf("You found the sword, but that's not what you wanted. Continue your journey.\n");
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
 
@@ -656,36 +661,36 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
     case CASE_MONSTER_ZOMBIE:
         if (active_weapon == WEAPON_TORCH) {
             printf("A zombie is in your way, but you burn him alive (or dead?) with your torch. Continue your journey.\n");
-            map[*player_position_y][*player_position_x].empty = true;
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A zombie is in your way, but you can't defeat him and he eats your brain. This is the end of your turn.\n");
+            printf("A zombie is in your way, but you can't defeat him and he eats your brain.\n");
             game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_HARPY:
         if (active_weapon == WEAPON_BOW) {
             printf("A harpy is in your way, but you kill it with your bow. Continue your journey.\n");
-            map[*player_position_y][*player_position_x].empty = true;
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A harpy is in you way, but you can't defeat her and she kills you. This is the end of your turn.\n");
+            printf("A harpy is in you way, but you can't defeat her and she kills you.\n");
             game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_BASILIC:
         if (active_weapon == WEAPON_SHIELD) {
             printf("A basilic is in your way, but she petrifies itself on the reflection of your shield. Continue your journey.\n");
-            map[*player_position_y][*player_position_x].empty = true;
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A basilic is in your way, but you can't defeat her and transform you to a stone statue. This is the end of your turn.\n");
+            printf("A basilic is in your way, but you can't defeat her and transform you to a stone statue.\n");
             game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_TROLL:
         if (active_weapon == WEAPON_AXE) {
             printf("A troll is in your way, you cut him in half with your axes. Continue your journey.\n");
-            map[*player_position_y][*player_position_x].empty = true;
+            move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A troll is in your way, but you can't defeat him and smash you to thin air. This is the end of your turn.\n");
+            printf("A troll is in your way, but you can't defeat him and he smashes you to thin air.\n");
             game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
@@ -693,19 +698,20 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
         printf("Unhandled case value: %d at (%d;%d)\n", map[*player_position_y][*player_position_x].content, *player_position_y, *player_position_x);
         break;
     }
-
-    // move the player image to the player position
+}
+void move_player_image(Board_Case **map, u32 player_position_x, u32 player_position_y, Case_Type turn) {
+    map[player_position_y][player_position_x].empty = true;
     // TODO can be optimized in a single loop
     for (int y = 0; y < MAP_SIZE; y++) {
         for (int x = 0; x < MAP_SIZE; x++) {
-            if (map[y][x].player == *turn) {
+            if (map[y][x].player == turn) {
                 map[y][x].player = CASE_EMPTY;
                 break;
             }
         }
     }
     // set the player image to the player coordinates
-    map[*player_position_y][*player_position_x].player = *turn;
+    map[player_position_y][player_position_x].player = turn;
 }
 
 void game_transmut(Board_Case **map) {
@@ -758,7 +764,7 @@ void game_transmut(Board_Case **map) {
         }
     }
 
-    printf("The totem has beenn switched with your choosen case!\nThis is the end of your turn.\n");
+    printf("The totem has beenn switched with your choosen case!\n");
 }
 
 void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y) {
@@ -776,6 +782,31 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *p
         exit(1);
     }
 
+    printf("This is the end of your turn.\n");
+
+    // change the player coordinate to it's base
+    switch (*turn) {
+    case PLAYER_BLUE:
+        *player_position_x = 0;
+        *player_position_y = 2;
+        break;
+    case PLAYER_GREEN:
+        *player_position_x = 4;
+        *player_position_y = 0;
+        break;
+    case PLAYER_WHITE:
+        *player_position_x = MAP_SIZE - 1;
+        *player_position_y = 4;
+        break;
+    case PLAYER_YELLOW:
+        *player_position_x = 2;
+        *player_position_y = MAP_SIZE - 1;
+        break;
+    default:
+        printf("unhandled value in game_next_turn: %d\n", *turn);
+        break;
+    }
+
     // we don't need to change turn if there is only one player
     if (player_amount > 1) {
         *turn += 1;
@@ -784,29 +815,7 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *p
         }
     }
 
-    // change the player coordinate
-    switch (*turn) {
-    case PLAYER_GREEN:
-        *player_position_x = 4;
-        *player_position_y = 0;
-        break;
-    case PLAYER_BLUE:
-        *player_position_x = 0;
-        *player_position_y = 2;
-        break;
-    case PLAYER_YELLOW:
-        *player_position_x = 2;
-        *player_position_y = MAP_SIZE - 1;
-        break;
-    case PLAYER_WHITE:
-        *player_position_x = MAP_SIZE - 1;
-        *player_position_y = 4;
-        break;
-    default:
-        break;
-    }
-
-    // change to hide and un empty correct case without randomizing it
+    // change case to hidden and un empty correct case without randomizing it
     map_reset(map);
 }
 

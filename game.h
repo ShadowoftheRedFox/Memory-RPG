@@ -116,6 +116,9 @@ void game_choose_class(Class_Type *class);
 // win display and ask for anotehr game, also save
 void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_number, b8 *game_running);
 
+// fix the player image to it's coordinates and delete all old images
+void move_player_image(Board_Case **map, u32 player_position_x, u32 player_position_y, Case_Type turn);
+
 // teleport the player on any hidden case he wants
 void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, u32 *player_position_y);
 //  move the current player

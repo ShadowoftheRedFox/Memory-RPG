@@ -46,6 +46,7 @@ int main(int argc, char const *argv[]) {
     // ask player names
     for (u32 count = 0; count < player_number; count++) {
         printf("Type the name of the player %d: ", count + 1);
+        // TODO save all char as lower, then print as upperfor the first one
         scanf("%s", player_name[count]);
         empty_stdin_buffer();
         // ask the player his class
@@ -54,9 +55,19 @@ int main(int argc, char const *argv[]) {
 
     // TODO make sure player can't get the same class
 
-    // setup the coordinates for the first player (blue)
-    player_y[0] = 2;
+    // setup the coordinates for the start
+    // player blue
     player_x[0] = 0;
+    player_y[0] = 2;
+    // player green
+    player_x[1] = 4;
+    player_y[1] = 0;
+    // player white
+    player_x[2] = MAP_SIZE - 1;
+    player_y[2] = 4;
+    // player yellow
+    player_x[3] = 2;
+    player_y[3] = MAP_SIZE - 1;
 
     // TODO load and save player score and name
     // TODO best score leaderboard?
@@ -68,7 +79,8 @@ int main(int argc, char const *argv[]) {
         turn_number = turn - PLAYER_BLUE;
 
         // say whose turn is who
-        printf("It's %s turn!\n\n", player_name[turn_number]);
+        // TODO add color dependings or the role
+        printf("It's %s turn!\nYou are on these case: (%d;%d)\n\n", player_name[turn_number], player_y[turn_number], player_x[turn_number]);
         //  show the board
         map_print(map);
 
@@ -96,5 +108,3 @@ int main(int argc, char const *argv[]) {
     map_destroy(map);
     return 0;
 }
-// BUG for 2 players, 2nd player can't move anywhere
-//  didn't test for more
