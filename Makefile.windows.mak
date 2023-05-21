@@ -8,6 +8,7 @@ OBJ_DIR = obj
 SRC_DIR = src
 # defines executable name 
 EXEC_NAME = MemoryRPG.exe
+
 # get all c files
 SRC=$(wildcard $(SRC_DIR)/*.c)
 # get all o files
