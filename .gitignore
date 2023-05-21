@@ -58,5 +58,5 @@ dkms.conf
 bin/
 obj/
 
-# save file
-*.save
+# save folder
+save/
