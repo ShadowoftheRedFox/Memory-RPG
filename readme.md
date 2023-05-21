@@ -12,11 +12,11 @@ Héloïse DEY
 
 # Files
 
-[main.c](./main.c) is the main file and the entry point. Game functions are in the [game.h](./game.h) and [game.c](./game.c) files. [save.h](./save.h) and [save.c](./save.c) are used to save the current game into a *memory.save* file. All other files are declarations and platform compatibity functions.
+[main.c](./src/main.c) is the main file and the entry point. Game functions are in the [game.h](./src/game.h) and [game.c](./src/game.c) files. [save.h](./src/save.h) and [save.c](./src/save.c) are used to save the current game into a *memory.save* file. All other files are declarations and platform compatibity functions.
 
 # Folder
 
-If you run [build.windows.bat](build.windows.bat)/[build.linux.bat](build.linux.sh) or [clean.windows.bat](clean.windows.bat)/[clean.linux.sh](clean.linux.sh), it will create/delete [bin](bin/) and [obj](obj/) directories. You need to be able to run makefile scripts to do so.
+If you run [build.windows.bat](./build.windows.bat)/[build.linux.bat](./build.linux.sh) or [clean.windows.bat](./clean.windows.bat)/[clean.linux.sh](./clean.linux.sh), it will create/delete [bin](bin/) and [obj](obj/) directories. You need to be able to run makefile scripts to do so.
 
 The [images folder](images/) is just for this readme file.
 
