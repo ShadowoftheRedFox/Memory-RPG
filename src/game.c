@@ -27,7 +27,8 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
         exit(1);
     }
     if (content >= TYPE_UNKNOWN || content < 0) {
-        printf("content is not the expected value in content_randomizer: %d\n", content);
+        printf("content is not the expected value in content_randomizer: %d\n",
+               content);
         exit(1);
     }
     // since it's recursiv, stop if n == 0
@@ -61,7 +62,8 @@ void content_randomizer(Board_Case **map, u8 n, Case_Type content) {
         // and fill it accordingly
         map[y][x].content = content;
         // then call again
-        // not really effective, but it does the work, and we are not focused on optimisation
+        // not really effective, but it does the work, and we are not focused on
+        // optimisation
         content_randomizer(map, n - 1, content);
     } else {
         free(array);
@@ -194,8 +196,6 @@ void map_print(Board_Case **map) {
         exit(1);
     }
 
-    // TODO add colors
-
     // loop through every case
     for (u8 y = 0; y < MAP_SIZE; y++) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
@@ -208,6 +208,7 @@ void map_print(Board_Case **map) {
                 }
             } else if (map[y][x].hidden) {
                 // if case is hidden
+                platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
 #ifdef PLATFORM_LINUX
                 printf("░░");
 #else
@@ -219,31 +220,38 @@ void map_print(Board_Case **map) {
 #ifdef PLATFORM_LINUX
                 //  player turn here for simplification
                 case PLAYER_GREEN:
+                    platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                     printf("⟏"); // warrior
                     break;
                 case PLAYER_BLUE:
+                    platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                     printf("⤅"); // ranger
                     break;
                 case PLAYER_WHITE:
+                    platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
                     printf("⚿"); // thief
                     break;
                 case PLAYER_YELLOW:
+                    platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                     // platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                     printf("⧋"); // wizard
                     break;
 #else
                 //  player turn here for simplification
                 case PLAYER_GREEN:
+                    platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                     printf("GR");
                     break;
                 case PLAYER_BLUE:
+                    platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                     printf("BL");
                     break;
                 case PLAYER_WHITE:
+                    platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
                     printf("WH");
                     break;
                 case PLAYER_YELLOW:
-                    // platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
+                    platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                     printf("YE");
                     break;
 #endif
@@ -252,103 +260,133 @@ void map_print(Board_Case **map) {
 #ifdef PLATFORM_LINUX
                     // type of object
                     case CASE_OBJECT_TREASURE:
+                        platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                         printf("﹩");
                         break;
                     case CASE_OBJECT_PORTAL:
+                        platform_color_change(COLOR_PINK, COLOR_EMPTY);
                         printf("⦿");
                         break;
                     case CASE_OBJECT_TOTEM:
+                        platform_color_change(COLOR_PINK, COLOR_EMPTY);
                         printf("🞖");
                         break;
                     case CASE_OBJECT_STAFF:
+                        platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                         printf("Ⳕ");
                         break;
                     case CASE_OBJECT_DAGGER:
+                        platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
                         printf("𐃋");
                         break;
                     case CASE_OBJECT_GRIMOIRE:
+                        platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                         printf("🕮");
                         break;
                     case CASE_OBJECT_SWORD:
+                        platform_color_change(COLOR_ORANGE, COLOR_EMPTY);
                         printf("⚔");
                         break;
 
                     // type of monster
                     case CASE_MONSTER_ZOMBIE:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("🕱");
                         break;
                     case CASE_MONSTER_HARPY:
+                        platform_color_change(COLOR_ RED, COLOR_EMPTY);
                         printf("⊛");
                         break;
                     case CASE_MONSTER_BASILIC:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("𝧜"); // don't know if this one works
                         break;
                     case CASE_MONSTER_TROLL:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("🧌"); // don't know if this one works
                         break;
 
                         // different type of player spawn
                     case CASE_SPAWN_GREEN:
+                        platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                         printf("▧");
                         break;
                     case CASE_SPAWN_BLUE:
+                        platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                         printf("▧");
                         break;
                     case CASE_SPAWN_WHITE:
+                        platform_color_change(COLOR_WHITE, COLOR_EMPTY);
                         printf("▧");
                         break;
                     case CASE_SPAWN_YELLOW:
+                        platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                         printf("▧");
                         break;
 #else
                     // type of object
                     case CASE_OBJECT_TREASURE:
+                        platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                         printf("TT");
                         break;
                     case CASE_OBJECT_PORTAL:
+                        platform_color_change(COLOR_PINK, COLOR_EMPTY);
                         printf("PP");
                         break;
                     case CASE_OBJECT_TOTEM:
+                        platform_color_change(COLOR_PINK, COLOR_EMPTY);
                         printf("TO");
                         break;
                     case CASE_OBJECT_STAFF:
+                        platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                         printf("SS");
                         break;
                     case CASE_OBJECT_DAGGER:
+                        platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
                         printf("DD");
                         break;
                     case CASE_OBJECT_GRIMOIRE:
+                        platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                         printf("GG");
                         break;
                     case CASE_OBJECT_SWORD:
+                        platform_color_change(COLOR_ORANGE, COLOR_EMPTY);
                         printf("SW");
                         break;
 
                     // type of monster
                     case CASE_MONSTER_ZOMBIE:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("ZO");
                         break;
                     case CASE_MONSTER_HARPY:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("HA");
                         break;
                     case CASE_MONSTER_BASILIC:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("BA"); // don't know if this one works
                         break;
                     case CASE_MONSTER_TROLL:
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
                         printf("TR"); // don't know if this one works
                         break;
 
                         // different type of player spawn
                     case CASE_SPAWN_GREEN:
+                        platform_color_change(COLOR_GREEN, COLOR_EMPTY);
                         printf("OO"); // warrior
                         break;
                     case CASE_SPAWN_BLUE:
+                        platform_color_change(COLOR_BLUE, COLOR_EMPTY);
                         printf("OO"); // ranger
                         break;
                     case CASE_SPAWN_WHITE:
+                        platform_color_change(COLOR_WHITE, COLOR_EMPTY);
                         printf("OO"); // thief
                         break;
                     case CASE_SPAWN_YELLOW:
+                        platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                         printf("OO"); // wizard
                         break;
 #endif
@@ -362,13 +400,16 @@ void map_print(Board_Case **map) {
                 }
             }
         }
+        platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
         printf("\n");
     }
     printf("\n");
 }
 
 //  move the current player
-void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y) {
+void player_move(Board_Case **map, Case_Type *turn, u32 player_amount,
+                 u32 *player_position_x, u32 *player_position_y,
+                 u32 *treasure_found, b8 *is_artifact_found) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in player_move\n");
@@ -397,13 +438,20 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
     b8 moved = false;
 
     // check if player can move on at least one case
-    if ((*player_position_y > 0 && map[*player_position_y - 1][*player_position_x].hidden == false) &&
-        (*player_position_y < MAP_SIZE - 1 && map[*player_position_y + 1][*player_position_x].hidden == false) &&
-        (*player_position_x > 0 && map[*player_position_y][*player_position_x - 1].hidden == false) &&
-        (*player_position_x < MAP_SIZE - 1 && map[*player_position_y][*player_position_x + 1].hidden == false)) {
+    if ((*player_position_y > 0 &&
+         map[*player_position_y - 1][*player_position_x].hidden == false) &&
+        (*player_position_y < MAP_SIZE - 1 &&
+         map[*player_position_y + 1][*player_position_x].hidden == false) &&
+        (*player_position_x > 0 &&
+         map[*player_position_y][*player_position_x - 1].hidden == false) &&
+        (*player_position_x < MAP_SIZE - 1 &&
+         map[*player_position_y][*player_position_x + 1].hidden == false)) {
         printf("You can't move anywhere!\n");
         // change turn and reset map
-        game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+        *treasure_found = 0;
+        is_artifact_found = false;
+        game_next_turn(map, turn, player_amount, player_position_x,
+                       player_position_y);
         return;
     }
 
@@ -413,7 +461,8 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
         empty_stdin_buffer();
         switch (choosen_direction) {
         case 2: // down
-            if (*player_position_y >= 5 || *player_position_x == 0 || *player_position_x == 6 ||
+            if (*player_position_y >= 5 || *player_position_x == 0 ||
+                *player_position_x == 6 ||
                 map[*player_position_y + 1][*player_position_x].hidden == false) {
                 printf("You can't move down here!\n");
                 break;
@@ -424,7 +473,8 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
             moved = true;
             break;
         case 4: // left
-            if (*player_position_x <= 1 || *player_position_y == 0 || *player_position_y == 6 ||
+            if (*player_position_x <= 1 || *player_position_y == 0 ||
+                *player_position_y == 6 ||
                 map[*player_position_y][*player_position_x - 1].hidden == false) {
                 printf("You can't move left here!\n");
                 break;
@@ -435,7 +485,8 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
             moved = true;
             break;
         case 6: // right
-            if (*player_position_x >= 5 || *player_position_y == 0 || *player_position_y == 6 ||
+            if (*player_position_x >= 5 || *player_position_y == 0 ||
+                *player_position_y == 6 ||
                 map[*player_position_y][*player_position_x + 1].hidden == false) {
                 printf("You can't move right here!\n");
                 break;
@@ -446,7 +497,8 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
             moved = true;
             break;
         case 8: // up
-            if (*player_position_y <= 1 || *player_position_x == 0 || *player_position_x == 6 ||
+            if (*player_position_y <= 1 || *player_position_x == 0 ||
+                *player_position_x == 6 ||
                 map[*player_position_y - 1][*player_position_x].hidden == false) {
                 printf("You can't move up here!\n");
                 break;
@@ -463,7 +515,8 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *play
     } while (correct != 1 || moved == false);
 }
 
-void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, u32 *player_position_y) {
+void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x,
+                     u32 *player_position_y) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in player_teleport\n");
@@ -505,7 +558,8 @@ void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, 
         printf(">> ");
         correct = scanf("%d", &case_input);
         empty_stdin_buffer();
-    } while (correct != 1 || map[(case_input) / 10][(case_input) % 10].hidden == false);
+    } while (correct != 1 ||
+             map[(case_input) / 10][(case_input) % 10].hidden == false);
 
     // the player move the player to the new coordinates
     *player_position_x = (case_input) % 10;
@@ -517,10 +571,11 @@ void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, 
     map_print(map);
 }
 
-void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *monster_killed, b8 *is_artifact_found,
-                Class_Type player_class, Choosen_Weapon active_weapon, u32 player_amount,
-                b8 *player_will_teleport, u32 *player_position_x, u32 *player_position_y,
-                b8 *is_winner) {
+void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
+                u32 *monster_killed, b8 *is_artifact_found,
+                Class_Type player_class, Choosen_Weapon active_weapon,
+                u32 player_amount, b8 *player_will_teleport,
+                u32 *player_position_x, u32 *player_position_y, b8 *is_winner) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in game_logic\n");
@@ -554,7 +609,7 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
         printf("active_weapon is out of range in game_logic\n");
         exit(1);
     }
-    if (player_amount > 4) {
+    if (player_amount > 4 || player_amount <= 0) {
         printf("player_amount is out of range in game_logic\n");
         exit(1);
     }
@@ -594,7 +649,10 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
     case CASE_OBJECT_TOTEM:
         move_player_image(map, *player_position_x, *player_position_y, *turn);
         game_transmut(map);
-        game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+        *treasure_found = 0;
+        is_artifact_found = false;
+        game_next_turn(map, turn, player_amount, player_position_x,
+                       player_position_y);
         break;
     case CASE_OBJECT_STAFF:
         if (player_class == CLASS_RANGER && !(*is_artifact_found)) {
@@ -612,7 +670,7 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
         }
         break;
     case CASE_OBJECT_DAGGER:
-        if (player_class == CLASS_THIEVE && !(*is_artifact_found)) {
+        if (player_class == CLASS_THIEF && !(*is_artifact_found)) {
             if (*treasure_found > 0) {
                 // enable the win display
                 *is_winner = true;
@@ -664,7 +722,10 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
             printf("A zombie is in your way, but you can't defeat him and he eats your brain.\n");
-            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+            *treasure_found = 0;
+            is_artifact_found = false;
+            game_next_turn(map, turn, player_amount, player_position_x,
+                           player_position_y);
         }
         break;
     case CASE_MONSTER_HARPY:
@@ -672,17 +733,23 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
             printf("A harpy is in your way, but you kill it with your bow. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A harpy is in you way, but you can't defeat her and she kills you.\n");
-            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+            printf("A harpy is in you way, but you can't defeat it and it kills you.\n");
+            *treasure_found = 0;
+            is_artifact_found = false;
+            game_next_turn(map, turn, player_amount, player_position_x,
+                           player_position_y);
         }
         break;
     case CASE_MONSTER_BASILIC:
         if (active_weapon == WEAPON_SHIELD) {
-            printf("A basilic is in your way, but she petrifies itself on the reflection of your shield. Continue your journey.\n");
+            printf("A basilic is in your way, but it petrifies itself on the reflection of your shield. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A basilic is in your way, but you can't defeat her and transform you to a stone statue.\n");
-            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+            printf("A basilic is in your way, but you can't defeat it and transforms you to a stone statue.\n");
+            *treasure_found = 0;
+            is_artifact_found = false;
+            game_next_turn(map, turn, player_amount, player_position_x,
+                           player_position_y);
         }
         break;
     case CASE_MONSTER_TROLL:
@@ -690,16 +757,29 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
             printf("A troll is in your way, you cut him in half with your axes. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A troll is in your way, but you can't defeat him and he smashes you to thin air.\n");
-            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
+            printf("A troll is in your way, but you can't defeat him and it smashes you to thin air.\n");
+            *treasure_found = 0;
+            is_artifact_found = false;
+            game_next_turn(map, turn, player_amount, player_position_x,
+                           player_position_y);
         }
         break;
+    case CASE_SPAWN_BLUE:
+    case CASE_SPAWN_GREEN:
+    case CASE_SPAWN_YELLOW:
+    case CASE_SPAWN_WHITE:
+        // hand the spawn, we do nothing
+        break;
     default:
-        printf("Unhandled case value: %d at (%d;%d)\n", map[*player_position_y][*player_position_x].content, *player_position_y, *player_position_x);
+        printf("Unhandled case value: %d at (%d;%d)\n",
+               map[*player_position_y][*player_position_x].content,
+               *player_position_y, *player_position_x);
         break;
     }
 }
-void move_player_image(Board_Case **map, u32 player_position_x, u32 player_position_y, Case_Type turn) {
+
+void move_player_image(Board_Case **map, u32 player_position_x,
+                       u32 player_position_y, Case_Type turn) {
     map[player_position_y][player_position_x].empty = true;
     // TODO can be optimized in a single loop
     for (int y = 0; y < MAP_SIZE; y++) {
@@ -721,14 +801,16 @@ void game_transmut(Board_Case **map) {
         exit(1);
     }
 
-    printf("You found a transmutation totem.\nChoose a case to switch position with the totem.\n\n");
+    printf("You found a transmutation totem.\nChoose a case to switch position "
+           "with the totem.\n\n");
 
     // will loop throught all case from above
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
         for (u32 x = 0; x <= (MAP_SIZE - 2); x++) {
             // if the case is hidden, print it's coordinates
             // !case next to the player spawn can't be transmuted
-            if (map[y][x].hidden && !(x == 1 && y == 2) && !(x == 4 && y == 1) && !(x == 2 && y == MAP_SIZE - 2) && !(x == MAP_SIZE - 2 && y == 4)) {
+            if (map[y][x].hidden && !(x == 1 && y == 2) && !(x == 4 && y == 1) &&
+                !(x == 2 && y == MAP_SIZE - 2) && !(x == MAP_SIZE - 2 && y == 4)) {
                 printf("%02d ", (y * 10 + x));
             } else {
                 printf("   ");
@@ -744,7 +826,8 @@ void game_transmut(Board_Case **map) {
         printf(">> ");
         correct = scanf("%d", &case_input);
         empty_stdin_buffer();
-    } while (correct != 1 || map[(case_input) / 10][(case_input) % 10].hidden == false ||
+    } while (correct != 1 ||
+             map[(case_input) / 10][(case_input) % 10].hidden == false ||
              ((case_input) % 10 == 1 && (case_input) / 10 == 2) ||
              ((case_input) % 10 == 4 && (case_input) / 10 == 1) ||
              ((case_input) % 10 == 2 && (case_input) / 10 == MAP_SIZE - 2) ||
@@ -767,7 +850,8 @@ void game_transmut(Board_Case **map) {
     printf("The totem has beenn switched with your choosen case!\n");
 }
 
-void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y) {
+void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount,
+                    u32 *player_position_x, u32 *player_position_y) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in game_next_turn\n");
@@ -808,6 +892,7 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *p
     }
 
     // we don't need to change turn if there is only one player
+    printf("amnt: %d\nturn: %d\n", player_amount, *turn);
     if (player_amount > 1) {
         *turn += 1;
         if (*turn - PLAYER_BLUE >= player_amount) {
@@ -819,7 +904,8 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *p
     map_reset(map);
 }
 
-void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_number, b8 *game_running) {
+void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH],
+              u32 round_number) {
     // verify parameters
     if (turn >= TYPE_UNKNOWN || turn < PLAYER_BLUE) {
         printf("turn is invalid in game_win\n");
@@ -829,10 +915,6 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_nu
         printf("player_name is null in game_win\n");
         exit(1);
     }
-    if (game_running == NULL) {
-        printf("game_running is null in game_win\n");
-        exit(1);
-    }
 
     i32 correct = 0;
     i32 answer = 0;
@@ -840,23 +922,6 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_nu
     // TODO save the score into the score files
 
     printf("Well done %s! You won after %d rounds!\n", player_name, round_number);
-
-    // TODO ask for another game
-
-    printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
-    do {
-        printf(">> ");
-        correct = scanf("%d", &answer);
-        empty_stdin_buffer();
-    } while (correct != 1 || answer < 1 || answer > 2);
-
-    if (answer == 2) {
-        *game_running = false;
-        printf("Goodbye!\n");
-    } else {
-        printf("Readying up to make a new game...\n");
-        // TODO find a way to do a new game
-    }
 }
 
 void game_choose_weapon(Choosen_Weapon *weapon) {
@@ -869,7 +934,8 @@ void game_choose_weapon(Choosen_Weapon *weapon) {
     u32 choice = 0;
     i32 correct = 0;
 
-    printf("\nChoose your weapon wisely:\n1 - Torch\n2 - Shield\n3 - Bow\n4 - Axe\n\n");
+    printf("\nChoose your weapon wisely:\n1 - Torch\n2 - Shield\n3 - Bow\n4 - "
+           "Axe\n\n");
     do {
         printf(">> ");
         correct = scanf("%d", &choice);
@@ -897,44 +963,120 @@ void game_choose_weapon(Choosen_Weapon *weapon) {
     }
 }
 
-void game_choose_class(Class_Type *class) {
+void game_choose_class(Class_Type player_class[4], u32 count) {
     // verify parameters
-    if (class == NULL) {
-        printf("class is null in game_choose_class\n");
+    if (player_class == NULL) {
+        printf("player_class is null in game_choose_class\n");
+        exit(1);
+    }
+    if (count < 0 || count > MAX_PLAYER) {
+        printf("count is out of range in game_choose_class\n");
         exit(1);
     }
 
     /*
     CLASS_MAGICIAN,
-    CLASS_THIEVE,
+    CLASS_THIEF,
     CLASS_RANGER,
     CLASS_WARRIOR,
+
+    CLASS_UNKNOWN
     */
 
     u32 choice = 0;
     i32 correct = 0;
+    u8 free_choice_left = 4;
+    Class_Type temp = CLASS_UNKNOWN;
+    u32 min = 0;
 
-    printf("\nChoose your class wisely:\n1 - Magician\n2 - Thieve\n3 - Ranger\n4 - Warrior\n\n");
-    do {
-        printf(">> ");
-        correct = scanf("%d", &choice);
-        empty_stdin_buffer();
-    } while (choice >= 5 || choice <= 0 || correct != 1);
+    /*
+    array of taken class (player_class) and array of free class
+    check if any are taken in the taken array
+    if yes, remove the class from the free class array
+    make the taken class CLASS_UNKNOWN and drop them at the end
+    then ask all those item in free
+    */
 
-    *class = choice - 1;
+    Class_Type free_class[MAX_PLAYER] = {CLASS_MAGICIAN, CLASS_THIEF, CLASS_RANGER, CLASS_WARRIOR};
 
-    switch (*class) {
+    // loop through the taken array
+    for (u32 t = 0; t < MAX_PLAYER; t++) {
+        // if taken class if unknown, skip the check since it's useless
+        if (player_class[t] == CLASS_UNKNOWN) {
+            continue;
+        } else {
+            // loop through free array
+            for (u32 f = 0; f < MAX_PLAYER; f++) {
+                // we find a taken class, remove it from free class and check next taken
+                // class
+                if (player_class[t] == free_class[f]) {
+                    free_class[f] = CLASS_UNKNOWN;
+                    free_choice_left--;
+                    break;
+                }
+            }
+        }
+    }
+
+    // fall the non unknown class to the beginning of the free class (with selection sort cuz only 4 items)
+    for (u32 i = 0; i < MAX_PLAYER; i++) {
+        min = i;
+        for (u32 j = i + 1; j < MAX_PLAYER; j++) {
+            if (free_class[j] < free_class[min]) {
+                min = j;
+            }
+        }
+
+        temp = free_class[i];
+        free_class[i] = free_class[min];
+        free_class[min] = temp;
+    }
+
+    // if there is only one choice left, just assigned it and tell the player
+    if (free_choice_left == 1) {
+        printf("Sadly, you are the last player to choose your class. This is a one way choice...\n");
+        player_class[count] = free_class[0];
+    } else {
+        // print ✨ beautifully ✨ the class choice
+        printf("\nChoose your class wisely:\n");
+        for (u32 i = 0; i < free_choice_left; i++) {
+            printf("%d - ", i + 1);
+            if (free_class[i] == CLASS_MAGICIAN) {
+                printf("Magician\n");
+            } else if (free_class[i] == CLASS_THIEF) {
+                printf("Thief\n");
+            } else if (free_class[i] == CLASS_RANGER) {
+                printf("Ranger\n");
+            } else if (free_class[i] == CLASS_WARRIOR) {
+                printf("Warrior\n");
+            }
+        }
+
+        do {
+            printf(">> ");
+            correct = scanf("%d", &choice);
+            empty_stdin_buffer();
+        } while (choice > free_choice_left || choice <= 0 || correct != 1);
+
+        player_class[count] = free_class[choice - 1];
+    }
+
+    switch (player_class[count]) {
     case CLASS_MAGICIAN:
-        printf("You choose the Magician. You will seek for the holy Grimoire, you're going to love casting those spells.\n");
+        printf("You choose the Magician. You will seek for the holy Grimoire, "
+               "you're going to love casting those spells.\n");
         break;
-    case CLASS_THIEVE:
-        printf("You choose the Thieve. You will seek the sleeper's Dager, ready to 'reclaim' what's 'yours'?\n");
+    case CLASS_THIEF:
+        printf("You choose the Thief. You will seek the sleeper's Dager, ready to "
+               "'reclaim' what's 'yours'?\n");
         break;
     case CLASS_RANGER:
-        printf("You choose the ranger. You will seek the powerful pet control stick, to form an army of cats.\n");
+        printf("You choose the ranger. You will seek the powerful pet control "
+               "stick, to form an army of cats.\n");
         break;
     case CLASS_WARRIOR:
-        printf("You choose the warrior. You will seek for the mighty sword of fire, to bring warmness to your home.\n");
+        printf("You choose the warrior. You will seek for the mighty sword of "
+               "fire, to bring warmness to your home.\n");
         break;
     default:
         printf("class is out of range in game_choose_class\n");

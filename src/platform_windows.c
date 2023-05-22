@@ -37,9 +37,74 @@ void platform_color_change_reset() {
 }
 
 void platform_color_change(Case_Color font, Case_Color back) {
-    // TODO or maybe not
-}
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    WORD attributes = 0;
 
+    // set background color
+    switch (back) {
+    case COLOR_RED:
+        attributes = attributes | BACKGROUND_RED | BACKGROUND_INTENSITY;
+        break;
+    case COLOR_GREEN:
+        attributes = attributes | BACKGROUND_GREEN | BACKGROUND_INTENSITY;
+        break;
+    case COLOR_BLUE:
+        attributes = attributes | BACKGROUND_BLUE;
+        break;
+    case COLOR_PINK:
+        attributes = attributes | BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY;
+        break;
+    case COLOR_YELLOW:
+        attributes = attributes | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
+        break;
+    case COLOR_WHITE:
+        attributes = attributes | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+        break;
+    case COLOR_EMPTY:
+        // Specify this one to just pass color, and not make a case for empty cases, black background
+        attributes = 0;
+        break;
+    default:
+        // it's all existing color
+        attributes = 0;
+        break;
+    }
+
+    // set font color
+    switch (font) {
+    case COLOR_RED:
+        attributes = attributes | FOREGROUND_RED | FOREGROUND_INTENSITY;
+        break;
+    case COLOR_GREEN:
+        attributes = attributes | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+        break;
+    case COLOR_BLUE:
+        attributes = attributes | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+        break;
+    case COLOR_YELLOW:
+        attributes = attributes | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+        break;
+    case COLOR_PINK:
+        attributes = attributes | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY;
+        break;
+    case COLOR_WHITE:
+        attributes = attributes | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN;
+        break;
+    case COLOR_EMPTY:
+        // Specify this one to just pass color, and not make a case for empty cases, white font
+        if (back == COLOR_EMPTY) {
+            attributes = 0;
+        }
+        break;
+    default:
+        // it's all existing color
+        attributes = 0;
+        break;
+    }
+
+    // change colors
+    SetConsoleTextAttribute(hConsole, attributes);
+}
 void *platform_allocate(u64 size) {
     void *r = malloc(size);
     if (r == NULL) {

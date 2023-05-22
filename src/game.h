@@ -49,7 +49,7 @@ typedef enum Case_Type {
 
 typedef enum Class_Type {
     CLASS_MAGICIAN,
-    CLASS_THIEVE,
+    CLASS_THIEF,
     CLASS_RANGER,
     CLASS_WARRIOR,
 
@@ -65,6 +65,7 @@ typedef enum Case_Color {
     COLOR_GREEN,
     COLOR_WHITE,
     COLOR_ORANGE,
+    COLOR_PINK,
 
     // for errors
     COLOR_UNKNOWN
@@ -112,9 +113,9 @@ void game_transmut(Board_Case **map);
 // choose a weapon before each round
 void game_choose_weapon(Choosen_Weapon *weapon);
 // choose a class before each start of the game
-void game_choose_class(Class_Type *class);
+void game_choose_class(Class_Type player_class[4], u32 count);
 // win display and ask for anotehr game, also save
-void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_number, b8 *game_running);
+void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_number);
 
 // fix the player image to it's coordinates and delete all old images
 void move_player_image(Board_Case **map, u32 player_position_x, u32 player_position_y, Case_Type turn);
@@ -122,7 +123,9 @@ void move_player_image(Board_Case **map, u32 player_position_x, u32 player_posit
 // teleport the player on any hidden case he wants
 void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, u32 *player_position_y);
 //  move the current player
-void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y);
+void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y,
+                 u32 *treasure_found, b8 *is_artifact_found);
 
 void empty_stdin_buffer();
+
 #endif

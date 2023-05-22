@@ -51,6 +51,9 @@ void platform_color_change(Case_Color font, Case_Color back) {
     case COLOR_YELLOW:
         back = 43;
         break;
+    case BOARD_COLOR_PINK:
+        back = 45;
+        break;
     case COLOR_WHITE:
         back = 47;
         break;
@@ -76,6 +79,9 @@ void platform_color_change(Case_Color font, Case_Color back) {
         break;
     case COLOR_YELLOW:
         printf("\033[33;1;%dm", back);
+        break;
+    case COLOR_PINK:
+        printf("\033[35;1;%dm", back);
         break;
     case COLOR_WHITE:
         printf("\033[37;1;%dm", back);
