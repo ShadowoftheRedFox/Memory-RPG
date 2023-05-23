@@ -15,13 +15,12 @@ int main(int argc, char const *argv[]) {
     b8 menu_running = true;
     Menu_Type actual_menu = MENU_MAIN;
     u8 confirm = 0;
-    i8 correct = 0;
+    i32 correct = 0;
     u8 turn_number = 0;
     u32 menu_choice = 0;
 
     // for counting the score
     u32 player_number = 0;
-    // TODO reset all variables when calling new_game
     u32 treasure_found[MAX_PLAYER] = {0, 0, 0, 0};
     u32 monster_killed[MAX_PLAYER] = {0, 0, 0, 0};
 
@@ -72,6 +71,8 @@ int main(int argc, char const *argv[]) {
                     // TODO LOAD GAME
                 break;
             case 2: // new game
+                map_setup(map);
+                reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, active_weapon, player_class, player_name, &turn, &is_winner);
                 new_game(&player_number, player_name, player_class);
                 actual_menu = MENU_GAME;
                 game_running = true;
@@ -151,6 +152,8 @@ int main(int argc, char const *argv[]) {
                         actual_menu = MENU_MAIN;
                     } else {
                         printf("Readying up to make a new game...\n");
+                        map_setup(map);
+                        reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, active_weapon, player_class, player_name, &turn, &is_winner);
                         new_game(&player_number, player_name, player_class);
                         actual_menu = MENU_GAME;
                         game_running = true;

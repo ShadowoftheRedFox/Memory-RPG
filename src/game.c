@@ -801,8 +801,7 @@ void game_transmut(Board_Case **map) {
         exit(1);
     }
 
-    printf("You found a transmutation totem.\nChoose a case to switch position "
-           "with the totem.\n\n");
+    printf("You found a transmutation totem.\nChoose a case to switch position with the totem.\n\n");
 
     // will loop throught all case from above
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
@@ -892,7 +891,6 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount,
     }
 
     // we don't need to change turn if there is only one player
-    printf("amnt: %d\nturn: %d\n", player_amount, *turn);
     if (player_amount > 1) {
         *turn += 1;
         if (*turn - PLAYER_BLUE >= player_amount) {
