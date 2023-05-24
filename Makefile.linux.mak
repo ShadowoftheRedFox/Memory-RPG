@@ -4,8 +4,10 @@ CC = gcc
 BUILD_DIR = bin
 # defines object directory
 OBJ_DIR = obj
-#defines the source directory
+# defines the source directory
 SRC_DIR = src
+# defines the save directory
+SAVE_DIR = save
 # defines executable name 
 EXEC_NAME = MemoryRPG
 
@@ -19,7 +21,7 @@ OBJ_STRIP=$(OBJ:$(SRC_DIR)/%=%)
 OBJ_IN_DIR=$(addprefix $(OBJ_DIR)/, $(OBJ_STRIP))
 
 # build everything
-all: objdir buildir exec
+all: savedir objdir buildir exec
 
 # build the executable
 exec: $(OBJ_IN_DIR)
@@ -33,10 +35,21 @@ buildir:
 objdir: 
 	mkdir -p $(OBJ_DIR)
 
+# create save directory
+savedir: 
+	mkdir -p $(SAVE_DIR)
+
 # delete bin then obj directory, with all files in it
 clean: 
+	if [ -d "$(BUILD_DIR)" ]; then
 	rm -r $(BUILD_DIR)
+	fi
+	if [ -d "$(OBJ_DIR)" ]; then
 	rm -r $(OBJ_DIR)
+	fi
+	if [ -d "$(SAVE_DIR)" ]; then
+	rm -r $(SAVE_DIR)
+	fi
 
 # build o files
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(OBJ_DIR) # compile .c to .o object
