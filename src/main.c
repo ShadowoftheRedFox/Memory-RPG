@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     b8 artifact_found[MAX_PLAYER] = {false, false, false, false};
     u32 player_x[MAX_PLAYER] = {0, 0, 0, 0};
     u32 player_y[MAX_PLAYER] = {0, 0, 0, 0};
-    Choosen_Weapon active_weapon[MAX_PLAYER] = {0, 0, 0, 0};
+    Choosen_Weapon active_weapon = WEAPON_UNKNOWN;
 
     // for the current game
     Class_Type player_class[MAX_PLAYER] = {CLASS_UNKNOWN, CLASS_UNKNOWN, CLASS_UNKNOWN, CLASS_UNKNOWN};
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
 
     // TODO load and save player score and name
     // TODO best score leaderboard?
-    // TODO round system
+    // TODO count round
 
     // runs menu
     while (menu_running) {
@@ -68,29 +68,81 @@ int main(int argc, char const *argv[]) {
             } while (menu_choice < 1 || menu_choice > 4 || correct != 1);
             switch (menu_choice) {
             case 1: // load actual game
-                    // TODO LOAD GAME
+                // TODO check if there is a save
+                if (!save_file_exists()) {
+                    printf("There is no game to resume.\n");
+                    actual_menu = MENU_MAIN;
+                } else {
+                    load_game(map, &player_number, treasure_found, monster_killed, round_number,
+                              treasure, will_teleport, artifact_found,
+                              player_x, player_y, &active_weapon, player_class,
+                              player_name, &turn, &is_winner);
+                    game_running = true;
+                    actual_menu = MENU_GAME;
+                }
                 break;
             case 2: // new game
                 map_setup(map);
-                reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, active_weapon, player_class, player_name, &turn, &is_winner);
+                reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, &active_weapon, player_class, player_name, &turn, &is_winner);
+                // launch the new game
                 new_game(&player_number, player_name, player_class);
+                // save the score of each player
+                for (u8 hihi = 0; hihi < player_number; hihi++) {
+                    save_score(player_name[hihi], 0, 0, 0);
+                }
                 actual_menu = MENU_GAME;
                 game_running = true;
                 break;
             case 3: // score
                     // TODO PRINT SCORE
+                show_score(5);
+
                 break;
             case 4: // quit
                 menu_running = false;
-                printf("Goodbye");
+                printf("Goodbye! See you again!\n");
                 break;
             }
         } else if (actual_menu == MENU_GAME) {
             // runs the game for the round
-            //? game reset after a new game?
             while (game_running) {
                 // [turn - PLAYER_BLUE] gives the correct number in the array depending of the turn, whatever is the number of player
                 turn_number = turn - PLAYER_BLUE;
+                // count the round for each players
+                round_number[turn_number]++;
+                save_game(map, player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found,
+                          player_x, player_y, active_weapon, player_class, player_name, turn, is_winner);
+
+                if (is_winner) {
+                    game_win(turn, player_name[turn_number], round_number[turn_number]);
+                    save_score(player_name[turn_number], treasure_found[turn_number], monster_killed[turn_number], 1);
+                    u32 answer;
+                    printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
+                    do {
+                        printf(">> ");
+                        correct = scanf("%d", &answer);
+                        empty_stdin_buffer();
+                    } while (correct != 1 || answer < 1 || answer > 2);
+
+                    if (answer == 2) {
+                        game_running = false;
+                        menu_running = true;
+                        actual_menu = MENU_MAIN;
+                        break;
+                    } else {
+                        printf("Readying up to make a new game...\n");
+                        map_setup(map);
+                        reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, &active_weapon, player_class, player_name, &turn, &is_winner);
+                        // launch the new game
+                        new_game(&player_number, player_name, player_class);
+                        // save the score of each player
+                        for (u8 hihi = 0; hihi < player_number; hihi++) {
+                            save_score(player_name[hihi], 0, 0, 0);
+                        }
+                        actual_menu = MENU_GAME;
+                        game_running = true;
+                    }
+                }
 
                 // say whose turn is who, with the right color
                 printf("It's ");
@@ -119,7 +171,7 @@ int main(int argc, char const *argv[]) {
                 map_print(map);
 
                 // ask for which weapon for this round
-                game_choose_weapon(&active_weapon[turn_number]);
+                game_choose_weapon(&active_weapon);
 
                 // await player move
                 if (!will_teleport[turn_number]) {
@@ -132,33 +184,8 @@ int main(int argc, char const *argv[]) {
 
                 // logic after the move
                 game_logic(map, &turn, &treasure[turn_number], &monster_killed[turn_number], &artifact_found[turn_number],
-                           player_class[turn_number], active_weapon[turn_number], player_number,
+                           player_class[turn_number], active_weapon, player_number,
                            &will_teleport[turn_number], &player_x[turn_number], &player_y[turn_number], &is_winner);
-
-                if (is_winner || !is_winner) { // TEST ---------- remove when finished testing game_win
-                    game_win(turn, player_name[turn_number], round_number[turn_number]);
-                    u32 answer;
-                    printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
-                    do {
-                        printf(">> ");
-                        correct = scanf("%d", &answer);
-                        empty_stdin_buffer();
-                    } while (correct != 1 || answer < 1 || answer > 2);
-
-                    if (answer == 2) {
-                        game_running = false;
-                        menu_running = false;
-                        printf("Goodbye!\n");
-                        actual_menu = MENU_MAIN;
-                    } else {
-                        printf("Readying up to make a new game...\n");
-                        map_setup(map);
-                        reset_variables(&player_number, treasure_found, monster_killed, round_number, treasure, will_teleport, artifact_found, player_x, player_y, active_weapon, player_class, player_name, &turn, &is_winner);
-                        new_game(&player_number, player_name, player_class);
-                        actual_menu = MENU_GAME;
-                        game_running = true;
-                    }
-                }
             }
         }
     }

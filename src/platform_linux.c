@@ -51,7 +51,7 @@ void platform_color_change(Case_Color font, Case_Color back) {
     case COLOR_YELLOW:
         back = 43;
         break;
-    case BOARD_COLOR_PINK:
+    case COLOR_PINK:
         back = 45;
         break;
     case COLOR_WHITE:

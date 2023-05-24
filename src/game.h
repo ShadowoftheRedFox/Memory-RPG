@@ -6,8 +6,12 @@
 #define MAP_SIZE 7
 #define PLAYER_NAME_LENGTH 30
 #define MAX_PLAYER 4
-// VVV comment line below to disable debuggin VVV
+// VVV comment line below to disable debugging VVV
 // #define DEBUG
+
+#define SCORE_KILL 1
+#define SCORE_TREASURE 2
+#define SCORE_WIN 5
 
 // define what is in a case
 typedef enum Case_Type {
@@ -114,7 +118,7 @@ void game_transmut(Board_Case **map);
 void game_choose_weapon(Choosen_Weapon *weapon);
 // choose a class before each start of the game
 void game_choose_class(Class_Type player_class[4], u32 count);
-// win display and ask for anotehr game, also save
+// win display and ask for another game, also save
 void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_number);
 
 // fix the player image to it's coordinates and delete all old images

@@ -12,12 +12,11 @@ void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGT
         printf(">> ");
         correct = scanf("%d", player_number);
         empty_stdin_buffer();
-    } while (*player_number < 0 || *player_number > MAX_PLAYER || correct != 1);
+    } while (*player_number <= 0 || *player_number > MAX_PLAYER || correct != 1);
 
     // ask player names
     for (u32 count = 0; count < *player_number; count++) {
         printf("Type the name of the player %d: ", count + 1);
-        // TODO save all char as lower, then print as upper for the first one
         scanf("%s", player_name[count]);
         empty_stdin_buffer();
         // ask the player his class
@@ -27,7 +26,7 @@ void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGT
 
 void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
                      u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
-                     u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon active_weapon[MAX_PLAYER], Class_Type player_class[MAX_PLAYER],
+                     u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
                      char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner) {
     // for counting the score
     player_number = 0;
@@ -41,7 +40,7 @@ void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 mon
     platform_zero_memory(artifact_found, sizeof(b8) * MAX_PLAYER);
     platform_zero_memory(player_x, sizeof(u32) * MAX_PLAYER);
     platform_zero_memory(player_y, sizeof(u32) * MAX_PLAYER);
-    platform_zero_memory(active_weapon, sizeof(Choosen_Weapon) * MAX_PLAYER);
+    *active_weapon = WEAPON_UNKNOWN;
 
     // for the current game
     // platform_set_memory(player_class, CLASS_UNKNOWN, sizeof(Class_Type) * MAX_PLAYER);

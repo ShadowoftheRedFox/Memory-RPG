@@ -201,11 +201,7 @@ void map_print(Board_Case **map) {
         for (u8 x = 0; x < MAP_SIZE; x++) {
             if (map[y][x].empty && map[y][x].player == CASE_EMPTY) {
                 // empty case
-                if (y == 0) {
-                    printf("  ");
-                } else {
-                    printf("  ");
-                }
+                printf("  ");
             } else if (map[y][x].hidden) {
                 // if case is hidden
                 platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
@@ -221,20 +217,20 @@ void map_print(Board_Case **map) {
                 //  player turn here for simplification
                 case PLAYER_GREEN:
                     platform_color_change(COLOR_GREEN, COLOR_EMPTY);
-                    printf("⟏"); // warrior
+                    printf("⟏ "); // warrior
                     break;
                 case PLAYER_BLUE:
                     platform_color_change(COLOR_BLUE, COLOR_EMPTY);
-                    printf("⤅"); // ranger
+                    printf("⤅ "); // ranger
                     break;
                 case PLAYER_WHITE:
                     platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
-                    printf("⚿"); // thief
+                    printf("⚿ "); // thief
                     break;
                 case PLAYER_YELLOW:
                     platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
                     // platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
-                    printf("⧋"); // wizard
+                    printf("⧋ "); // wizard
                     break;
 #else
                 //  player turn here for simplification
@@ -261,67 +257,67 @@ void map_print(Board_Case **map) {
                     // type of object
                     case CASE_OBJECT_TREASURE:
                         platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
-                        printf("﹩");
+                        printf("﹩ ");
                         break;
                     case CASE_OBJECT_PORTAL:
                         platform_color_change(COLOR_PINK, COLOR_EMPTY);
-                        printf("⦿");
+                        printf("⦿ ");
                         break;
                     case CASE_OBJECT_TOTEM:
                         platform_color_change(COLOR_PINK, COLOR_EMPTY);
-                        printf("🞖");
+                        printf("🞖 ");
                         break;
                     case CASE_OBJECT_STAFF:
                         platform_color_change(COLOR_GREEN, COLOR_EMPTY);
-                        printf("Ⳕ");
+                        printf("Ⳕ ");
                         break;
                     case CASE_OBJECT_DAGGER:
                         platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
-                        printf("𐃋");
+                        printf("𐃋 ");
                         break;
                     case CASE_OBJECT_GRIMOIRE:
                         platform_color_change(COLOR_BLUE, COLOR_EMPTY);
-                        printf("🕮");
+                        printf("🕮 ");
                         break;
                     case CASE_OBJECT_SWORD:
                         platform_color_change(COLOR_ORANGE, COLOR_EMPTY);
-                        printf("⚔");
+                        printf("⚔ ");
                         break;
 
                     // type of monster
                     case CASE_MONSTER_ZOMBIE:
                         platform_color_change(COLOR_RED, COLOR_EMPTY);
-                        printf("🕱");
+                        printf("🕱 ");
                         break;
                     case CASE_MONSTER_HARPY:
-                        platform_color_change(COLOR_ RED, COLOR_EMPTY);
-                        printf("⊛");
+                        platform_color_change(COLOR_RED, COLOR_EMPTY);
+                        printf("⊛ ");
                         break;
                     case CASE_MONSTER_BASILIC:
                         platform_color_change(COLOR_RED, COLOR_EMPTY);
-                        printf("𝧜"); // don't know if this one works
+                        printf("𝧜 "); // don't know if this one works
                         break;
                     case CASE_MONSTER_TROLL:
                         platform_color_change(COLOR_RED, COLOR_EMPTY);
-                        printf("🧌"); // don't know if this one works
+                        printf("🧌 "); // don't know if this one works
                         break;
 
                         // different type of player spawn
                     case CASE_SPAWN_GREEN:
                         platform_color_change(COLOR_GREEN, COLOR_EMPTY);
-                        printf("▧");
+                        printf("▧ ");
                         break;
                     case CASE_SPAWN_BLUE:
                         platform_color_change(COLOR_BLUE, COLOR_EMPTY);
-                        printf("▧");
+                        printf("▧ ");
                         break;
                     case CASE_SPAWN_WHITE:
                         platform_color_change(COLOR_WHITE, COLOR_EMPTY);
-                        printf("▧");
+                        printf("▧ ");
                         break;
                     case CASE_SPAWN_YELLOW:
                         platform_color_change(COLOR_YELLOW, COLOR_EMPTY);
-                        printf("▧");
+                        printf("▧ ");
                         break;
 #else
                     // type of object
