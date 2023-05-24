@@ -57,6 +57,10 @@ int main(int argc, char const *argv[]) {
     // TODO best score leaderboard?
     // TODO count round
 
+    // TEST -------------------------------
+    save_score("gg", 3, 5, 1);
+    return 0;
+
     // runs menu
     while (menu_running) {
         if (actual_menu == MENU_MAIN) {

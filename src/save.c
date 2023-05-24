@@ -131,8 +131,6 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
 b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 monster_killed, u32 game_won) {
     Save_Player_Score file_struct;
     Save_Player_Score temp;
-    u64 file_size;
-    u64 struct_amount;
     // TODO check other parameters
 
     FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "ab+");
@@ -147,26 +145,14 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
     file_struct.game_won = game_won;
     file_struct.monster_killed = monster_killed;
 
-    // get the file size
-    // move to the end of the file
-    // since we are openning the file in append mode, the cursor is already at the end
-    // get the cursor position
-    file_size = ftell(file);
-    // get back at the beginning
-    fseek(file, 0L, SEEK_SET);
-
-    // calculate the struct number there is in the file
-    struct_amount = file_size / sizeof(Save_Player_Score);
-    printf("F: %llu\n", struct_amount);
-
-    for (u64 count = 0; count * sizeof(Save_Player_Score) < file_size; count++) {
-        // move the cursor as we read
-        fread(&temp, sizeof(temp), 1, file);
-        printf("player in score: %s is a biatch\n", temp.player_name);
+    // move the cursor as we read
+    // while == 1 because we want 1 item successfully read
+    while (fread(&temp, sizeof(Save_Player_Score), 1, file) == 1) {
+        printf("went through player: %s\n", temp.player_name);
 
         // check if the name is the same
         if (strcmp(temp.player_name, file_struct.player_name) == 0) {
-            printf("found zi player %s\n", temp.player_name);
+            printf("player found: %s\n", temp.player_name);
             // get back just before the wanted struct
             fseek(file, (long)(-sizeof(Save_Player_Score)), SEEK_CUR);
             // update the found struct
@@ -180,7 +166,7 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
         }
     }
 
-    printf("noot found zi player %s\n", file_struct.player_name);
+    printf("player not found %s, adding after\n", file_struct.player_name);
     // if we are here, there is no one with the same name, so add it on the file
     fwrite(&file_struct, sizeof(Save_Player_Score), 1, file);
 
@@ -191,32 +177,14 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
 
 void show_score(u32 amount_to_show) {
     Save_Player_Score temp;
-    u64 file_size;
-    u64 struct_amount;
 
     FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "rb");
     if (file == NULL) {
         printf("Failed to get the save file in show_score.\n");
     }
 
-    // get the file size
-    // move to the end of the file
-    fseek(file, 0L, SEEK_END);
-    // get the cursor position
-    file_size = ftell(file);
-    // get back at the beginning
-    fseek(file, 0L, SEEK_SET);
-
-    // calculate the struct number there is in the file
-    struct_amount = file_size / sizeof(Save_Player_Score);
-    if (struct_amount < amount_to_show) {
-        amount_to_show = struct_amount;
-    }
-
-    for (u64 count = 0; count < amount_to_show; count++) {
-        // move the cursor as we read
-        fread(&temp, sizeof(temp), 1, file);
-
+    // move the cursor as we read
+    while (fread(&temp, sizeof(temp), 1, file) == 1) {
         // print the score
         printf("%s: %d\n", temp.player_name,
                temp.game_won * SCORE_WIN + temp.monster_killed * SCORE_KILL + temp.treasure_found * SCORE_TREASURE);
