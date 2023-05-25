@@ -63,6 +63,7 @@ Once it is done, head to the [bin folder](./bin/) and you will find the game exe
 
 Here is a list of known bugs:
 - On Linux: The first run of [build.linux.bat](./build.linux.sh) may run into an error. Re running it does what the file is intended to do.
+- Totem do not swap case with the chosen one. 
 
 ## Preview
 

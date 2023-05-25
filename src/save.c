@@ -139,11 +139,12 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
              u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
              char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner) {
     // verify parameters
+    // we are gonna edit all those value, we just need to check if thet are not null
     if (map == NULL) {
         printf("Map is null on load_game\n");
         exit(2);
     }
-    if (player_number == NULL || *player_number < 0 || *player_number > MAX_PLAYER) {
+    if (player_number == NULL) {
         printf("player_number is out of range in load_game\n");
         exit(1);
     }
@@ -179,7 +180,7 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
         printf("player_y is null in load_game\n");
         exit(1);
     }
-    if (active_weapon == NULL || *active_weapon < 0 || *active_weapon >= WEAPON_UNKNOWN) {
+    if (active_weapon == NULL) {
         printf("active_weapon is out of range in load_game\n");
         exit(1);
     }
@@ -191,11 +192,11 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
         printf("player_name is null in load_game\n");
         exit(1);
     }
-    if (turn == NULL || *turn < PLAYER_BLUE || *turn >= TYPE_UNKNOWN) {
+    if (turn == NULL) {
         printf("turn is out of range in load_game\n");
         exit(1);
     }
-    if (is_winner == NULL || *is_winner != true && *is_winner != false) {
+    if (is_winner == NULL) {
         printf("is_winner is out of range in load_game\n");
         exit(1);
     }

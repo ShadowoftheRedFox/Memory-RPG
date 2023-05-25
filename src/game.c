@@ -1,4 +1,5 @@
 #include "./game.h"
+#include "./menu.h"
 #include "./platform.h"
 
 // TODO add sleep and console clear, print animation like ori
@@ -436,21 +437,19 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount,
         exit(1);
     }
 
+    platform_console_clear();
+
     // Choose the direction
     i32 choosen_direction;
     i32 correct = 0;
     b8 moved = false;
 
     // check if player can move on at least one case
-    if ((*player_position_y > 0 &&
-         map[*player_position_y - 1][*player_position_x].hidden == false) &&
-        (*player_position_y < MAP_SIZE - 1 &&
-         map[*player_position_y + 1][*player_position_x].hidden == false) &&
-        (*player_position_x > 0 &&
-         map[*player_position_y][*player_position_x - 1].hidden == false) &&
-        (*player_position_x < MAP_SIZE - 1 &&
-         map[*player_position_y][*player_position_x + 1].hidden == false)) {
-        printf("You can't move anywhere!\n");
+    if ((*player_position_y > 0 && map[*player_position_y - 1][*player_position_x].hidden == false) &&
+        (*player_position_y < MAP_SIZE - 1 && map[*player_position_y + 1][*player_position_x].hidden == false) &&
+        (*player_position_x > 0 && map[*player_position_y][*player_position_x - 1].hidden == false) &&
+        (*player_position_x < MAP_SIZE - 1 && map[*player_position_y][*player_position_x + 1].hidden == false)) {
+        animate_printf("You can't move anywhere!\n");
         // change turn and reset map
         *treasure_found = 0;
         is_artifact_found = false;
@@ -459,64 +458,100 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount,
         return;
     }
 
+    // now check if we can move on the case
+    b8 can_move_right = !(*player_position_x >= 5 || *player_position_y == 0 || *player_position_y == 6 || map[*player_position_y][*player_position_x + 1].hidden == false);
+    b8 can_move_left = !(*player_position_x <= 1 || *player_position_y == 0 || *player_position_y == 6 || map[*player_position_y][*player_position_x - 1].hidden == false);
+    b8 can_move_up = !(*player_position_y <= 1 || *player_position_x == 0 || *player_position_x == 6 || map[*player_position_y - 1][*player_position_x].hidden == false);
+    b8 can_move_down = !(*player_position_y >= 5 || *player_position_x == 0 || *player_position_x == 6 || map[*player_position_y + 1][*player_position_x].hidden == false);
+
     do {
-        printf("Choose your path: \n   [8]   \n[4]   [6]\n   [2]   \n>> ");
+        // only print the direction the player can take
+        // spaces are useless, just to keep teh same amount of space used each times
+        /*
+        Pattern:
+                Top
+                [8]
+        Left [4]   [6] Right
+                [2]
+              Bottom
+        */
+
+        animate_printf("Choose your path: \n");
+        if (can_move_up) {
+            animate_printf("        Top\n        [8]\n");
+        } else {
+            animate_printf("           \n           \n");
+        }
+        if (can_move_left) {
+            animate_printf("Left [4]   ");
+        } else {
+            animate_printf("           ");
+        }
+        if (can_move_right) {
+            animate_printf("[6] Right\n");
+        } else {
+            animate_printf("         \n");
+        }
+        if (can_move_down) {
+            animate_printf("        [2]\n      Bottom\n");
+        } else {
+            animate_printf("           \n            \n");
+        }
+        animate_printf(">> ");
+
         correct = scanf("%d", &choosen_direction);
         empty_stdin_buffer();
         switch (choosen_direction) {
         case 2: // down
-            if (*player_position_y >= 5 || *player_position_x == 0 ||
-                *player_position_x == 6 ||
-                map[*player_position_y + 1][*player_position_x].hidden == false) {
-                printf("You can't move down here!\n");
+            if (!can_move_down) {
+                animate_printf("You can't move down here!\n");
                 break;
             }
             *player_position_y += 1;
             map[*player_position_y][*player_position_x].hidden = false;
+            platform_console_clear();
             map_print(map);
             moved = true;
             break;
         case 4: // left
-            if (*player_position_x <= 1 || *player_position_y == 0 ||
-                *player_position_y == 6 ||
-                map[*player_position_y][*player_position_x - 1].hidden == false) {
-                printf("You can't move left here!\n");
+            if (!can_move_left) {
+                animate_printf("You can't move left here!\n");
                 break;
             }
             *player_position_x -= 1;
             map[*player_position_y][*player_position_x].hidden = false;
+            platform_console_clear();
             map_print(map);
             moved = true;
             break;
         case 6: // right
-            if (*player_position_x >= 5 || *player_position_y == 0 ||
-                *player_position_y == 6 ||
-                map[*player_position_y][*player_position_x + 1].hidden == false) {
-                printf("You can't move right here!\n");
+            if (!can_move_right) {
+                animate_printf("You can't move right here!\n");
                 break;
             }
             *player_position_x += 1;
             map[*player_position_y][*player_position_x].hidden = false;
+            platform_console_clear();
             map_print(map);
             moved = true;
             break;
         case 8: // up
-            if (*player_position_y <= 1 || *player_position_x == 0 ||
-                *player_position_x == 6 ||
-                map[*player_position_y - 1][*player_position_x].hidden == false) {
-                printf("You can't move up here!\n");
+            if (!can_move_up) {
+                animate_printf("You can't move up here!\n");
                 break;
             }
             *player_position_y -= 1;
             map[*player_position_y][*player_position_x].hidden = false;
+            platform_console_clear();
             map_print(map);
             moved = true;
             break;
         default:
-            printf("This is not a correct direction!\n");
+            animate_printf("This is not a correct direction!\n");
             break;
         }
     } while (correct != 1 || moved == false);
+    platform_sleep(1000);
 }
 
 void player_teleport(Board_Case **map, u32 *player_position_x,
@@ -535,7 +570,7 @@ void player_teleport(Board_Case **map, u32 *player_position_x,
         exit(1);
     }
 
-    printf("Choose somewhere to be teleported:\n");
+    animate_printf("Choose somewhere to be teleported:\n");
 
     // will loop throught all case from above
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
@@ -634,24 +669,24 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                 // enable the win display
                 *is_winner = true;
             } else {
-                printf("You found a treasure! Now find your artifact.\n");
+                animate_printf("You found a treasure! Now find your artifact.\n");
                 move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *treasure_found += 1;
             }
         } else {
-            printf("You found another treasure! Now find your artifact.\n");
+            animate_printf("You found another treasure! Now find your artifact.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
             *treasure_found += 1;
         }
         break;
     case CASE_OBJECT_PORTAL:
-        printf("You found a weird shiny portal and you step inside...\n");
+        animate_printf("You found a weird shiny portal and you step inside...\n");
         move_player_image(map, *player_position_x, *player_position_y, *turn);
         *player_will_teleport = true;
         break;
     case CASE_OBJECT_TOTEM:
-        move_player_image(map, *player_position_x, *player_position_y, *turn);
         game_transmut(map);
+        move_player_image(map, *player_position_x, *player_position_y, *turn);
         *treasure_found = 0;
         is_artifact_found = false;
         game_next_turn(map, turn, player_amount, player_position_x,
@@ -663,12 +698,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                 // enable the win display
                 *is_winner = true;
             } else {
-                printf("You found the control staff you seeked for! Now find a treasure.\n");
+                animate_printf("You found the control staff you seeked for! Now find a treasure.\n");
                 move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
-            printf("You found the control staff, but that's not what you wanted. Continue your journey.\n");
+            animate_printf("You found the control staff, but that's not what you wanted. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
@@ -678,12 +713,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                 // enable the win display
                 *is_winner = true;
             } else {
-                printf("You found the dagger you seeked for! Now find a treasure.\n");
+                animate_printf("You found the dagger you seeked for! Now find a treasure.\n");
                 move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
-            printf("You found the dagger, but that's not what you wanted. Continue your journey.\n");
+            animate_printf("You found the dagger, but that's not what you wanted. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
@@ -693,12 +728,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                 // enable the win display
                 *is_winner = true;
             } else {
-                printf("You found the grimoire you seeked for! Now find a treasure.\n");
+                animate_printf("You found the grimoire you seeked for! Now find a treasure.\n");
                 move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
-            printf("You found the grimoire, but that's not what you wanted. Continue your journey.\n");
+            animate_printf("You found the grimoire, but that's not what you wanted. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
@@ -708,12 +743,12 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                 // enable the win display
                 *is_winner = true;
             } else {
-                printf("You found the sword you seeked for! Now find a treasure.\n");
+                animate_printf("You found the sword you seeked for! Now find a treasure.\n");
                 move_player_image(map, *player_position_x, *player_position_y, *turn);
                 *is_artifact_found = true;
             }
         } else {
-            printf("You found the sword, but that's not what you wanted. Continue your journey.\n");
+            animate_printf("You found the sword, but that's not what you wanted. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         }
         break;
@@ -721,50 +756,46 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
     // type of monster
     case CASE_MONSTER_ZOMBIE:
         if (active_weapon == WEAPON_TORCH) {
-            printf("A zombie is in your way, but you burn him alive (or dead?) with your torch. Continue your journey.\n");
+            animate_printf("A zombie is in your way, but you burn him alive (or dead?) with your torch. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A zombie is in your way, but you can't defeat him and he eats your brain.\n");
+            animate_printf("A zombie is in your way, but you can't defeat him and he eats your brain.\n");
             *treasure_found = 0;
             is_artifact_found = false;
-            game_next_turn(map, turn, player_amount, player_position_x,
-                           player_position_y);
+            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_HARPY:
         if (active_weapon == WEAPON_BOW) {
-            printf("A harpy is in your way, but you kill it with your bow. Continue your journey.\n");
+            animate_printf("A harpy is in your way, but you kill it with your bow. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A harpy is in you way, but you can't defeat it and it kills you.\n");
+            animate_printf("A harpy is in you way, but you can't defeat it and it kills you.\n");
             *treasure_found = 0;
             is_artifact_found = false;
-            game_next_turn(map, turn, player_amount, player_position_x,
-                           player_position_y);
+            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_BASILIC:
         if (active_weapon == WEAPON_SHIELD) {
-            printf("A basilic is in your way, but it petrifies itself on the reflection of your shield. Continue your journey.\n");
+            animate_printf("A basilic is in your way, but it petrifies itself on the reflection of your shield. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
             printf("A basilic is in your way, but you can't defeat it and transforms you to a stone statue.\n");
             *treasure_found = 0;
             is_artifact_found = false;
-            game_next_turn(map, turn, player_amount, player_position_x,
-                           player_position_y);
+            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_MONSTER_TROLL:
         if (active_weapon == WEAPON_AXE) {
-            printf("A troll is in your way, you cut him in half with your axes. Continue your journey.\n");
+            animate_printf("A troll is in your way, you cut him in half with your axes. Continue your journey.\n");
             move_player_image(map, *player_position_x, *player_position_y, *turn);
         } else {
-            printf("A troll is in your way, but you can't defeat him and it smashes you to thin air.\n");
+            animate_printf("A troll is in your way, but you can't defeat him and it smashes you to thin air.\n");
             *treasure_found = 0;
             is_artifact_found = false;
-            game_next_turn(map, turn, player_amount, player_position_x,
-                           player_position_y);
+            game_next_turn(map, turn, player_amount, player_position_x, player_position_y);
         }
         break;
     case CASE_SPAWN_BLUE:
@@ -779,6 +810,8 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
                *player_position_y, *player_position_x);
         break;
     }
+
+    platform_console_clear();
 }
 
 void move_player_image(Board_Case **map, u32 player_position_x,
@@ -812,6 +845,8 @@ void move_player_image(Board_Case **map, u32 player_position_x,
     }
     // set the player image to the player coordinates
     map[player_position_y][player_position_x].player = turn;
+
+    platform_sleep(3000);
 }
 
 void game_transmut(Board_Case **map) {
@@ -826,7 +861,8 @@ void game_transmut(Board_Case **map) {
     Board_Case temp;
     b8 found = false;
 
-    printf("You found a transmutation totem.\nChoose a case to switch position with the totem.\n\n");
+    platform_console_clear();
+    animate_printf("You found a transmutation totem.\nChoose a case to switch position with the totem.\n\n");
 
     // will loop throught all case from above
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
@@ -859,6 +895,7 @@ void game_transmut(Board_Case **map) {
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
         for (u32 x = 0; x <= (MAP_SIZE - 2); x++) {
             if (map[y][x].content == CASE_OBJECT_TOTEM) {
+                // BUGS totem do not swap withthe choosen case
                 temp = map[y][x];
                 map[y][x] = map[(case_input) / 10][(case_input) % 10];
                 map[(case_input) / 10][(case_input) % 10] = temp;
@@ -871,7 +908,8 @@ void game_transmut(Board_Case **map) {
         }
     }
 
-    printf("The totem has beenn switched with your choosen case!\n");
+    animate_printf("The totem has beenn switched with your choosen case!\n");
+    platform_sleep(750);
 }
 
 void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount,
@@ -898,7 +936,9 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount,
         exit(1);
     }
 
-    printf("This is the end of your turn.\n");
+    animate_printf("This is the end of your turn.\n");
+    // await user confirm before continuing
+    confirm();
 
     // change the player coordinate to it's base
     switch (*turn) {
@@ -951,21 +991,20 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH],
         exit(1);
     }
 
-    printf("Well done %s! You won after %d rounds!\n", player_name, round_number);
+    // used to format the given string the same way of printf
+    char temp[100];
+    sprintf(temp, "Well done %s! You won after %d rounds!\n", player_name, round_number);
+    animate_printf(temp);
 }
 
 void game_choose_weapon(Choosen_Weapon *weapon) {
     // verify parameters
-    if (weapon == NULL || *weapon >= WEAPON_UNKNOWN || *weapon < 0) {
-        printf("weapon is out of range in game_choose_weapon\n");
-        exit(1);
-    }
+    // we're editing the weapon to known parameters, we don't use the old value, we don't need to check it
 
     u32 choice = 0;
     i32 correct = 0;
 
-    printf("\nChoose your weapon wisely:\n1 - Torch\n2 - Shield\n3 - Bow\n4 - "
-           "Axe\n\n");
+    animate_printf("\nChoose your weapon wisely:\n1 - Torch\n2 - Shield\n3 - Bow\n4 - Axe\n\n");
     do {
         printf(">> ");
         correct = scanf("%d", &choice);
@@ -976,21 +1015,23 @@ void game_choose_weapon(Choosen_Weapon *weapon) {
 
     switch (*weapon) {
     case WEAPON_AXE:
-        printf("You choose the axe, you're ready to cut in half trolls.\n");
+        animate_printf("You choose the axe, you're ready to cut in half trolls.\n");
         break;
     case WEAPON_BOW:
-        printf("You choose the bow. Ready to shoot harpy ?\n");
+        animate_printf("You choose the bow. Ready to shoot harpy ?\n");
         break;
     case WEAPON_TORCH:
-        printf("You choose the torch, you're ready to burn to ash zombies.\n");
+        animate_printf("You choose the torch, you're ready to burn to ash zombies.\n");
         break;
     case WEAPON_SHIELD:
-        printf("You choose the shield. Ready to petrify the Basilic ?\n");
+        animate_printf("You choose the shield. Ready to petrify the Basilic ?\n");
         break;
     default:
         printf("weapon is out of range in game_choose_weapon\n");
         break;
     }
+
+    platform_sleep(2000);
 }
 
 void game_choose_class(Class_Type player_class[4], u32 count) {
@@ -1062,23 +1103,24 @@ void game_choose_class(Class_Type player_class[4], u32 count) {
         free_class[min] = temp;
     }
 
+    platform_console_clear();
     // if there is only one choice left, just assigned it and tell the player
     if (free_choice_left == 1) {
-        printf("Sadly, you are the last player to choose your class. This is a one way choice...\n");
+        animate_printf("Sadly, you are the last player to choose your class. This is a one way choice...\n");
         player_class[count] = free_class[0];
     } else {
         // print ✨ beautifully ✨ the class choice
-        printf("\nChoose your class wisely:\n");
+        animate_printf("\nChoose your class wisely:\n");
         for (u32 i = 0; i < free_choice_left; i++) {
             printf("%d - ", i + 1);
             if (free_class[i] == CLASS_MAGICIAN) {
-                printf("Magician\n");
+                animate_printf("Magician\n");
             } else if (free_class[i] == CLASS_THIEF) {
-                printf("Thief\n");
+                animate_printf("Thief\n");
             } else if (free_class[i] == CLASS_RANGER) {
-                printf("Ranger\n");
+                animate_printf("Ranger\n");
             } else if (free_class[i] == CLASS_WARRIOR) {
-                printf("Warrior\n");
+                animate_printf("Warrior\n");
             }
         }
 
@@ -1093,25 +1135,22 @@ void game_choose_class(Class_Type player_class[4], u32 count) {
 
     switch (player_class[count]) {
     case CLASS_MAGICIAN:
-        printf("You choose the Magician. You will seek for the holy Grimoire, "
-               "you're going to love casting those spells.\n");
+        animate_printf("You choose the Magician. You will seek for the holy Grimoire. You're going to love casting those spells.\n");
         break;
     case CLASS_THIEF:
-        printf("You choose the Thief. You will seek the sleeper's Dager, ready to "
-               "'reclaim' what's 'yours'?\n");
+        animate_printf("You choose the Thief. You will seek the sleeper's Dager, ready to 'reclaim' what's 'yours'?\n");
         break;
     case CLASS_RANGER:
-        printf("You choose the ranger. You will seek the powerful pet control "
-               "staff, to form an army of cats.\n");
+        animate_printf("You choose the ranger. You will seek the powerful pet control staff, to form an army of cats.\n");
         break;
     case CLASS_WARRIOR:
-        printf("You choose the warrior. You will seek for the mighty sword of "
-               "fire, to bring warmness to your home.\n");
+        animate_printf("You choose the warrior. You will seek for the mighty sword of fire, to bring warmness to your home.\n");
         break;
     default:
         printf("class is out of range in game_choose_class\n");
         break;
     }
+    platform_sleep(2000);
 }
 
 void map_destroy(Board_Case **map) {

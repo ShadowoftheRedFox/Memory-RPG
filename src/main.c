@@ -6,6 +6,7 @@
 int main(int argc, char const *argv[]) {
     // setup game rand
     platform_srand();
+    platform_console_clear();
 
     // create the map
     Board_Case **map = map_create();
@@ -57,18 +58,23 @@ int main(int argc, char const *argv[]) {
     while (menu_running) {
         if (actual_menu == MENU_MAIN) {
             // we are in the main menu
-            printf("MENU\n1 - LOAD GAME\n2 - NEW GAME\n3 - SCORES\n4 - QUIT\n");
+            platform_console_clear();
+            animate_printf("Menu:\n1 - Load game\n2 - New game\n3 - Scores\n4 - Quit game\n");
             do {
                 printf(">> ");
                 correct = scanf("%d", &menu_choice);
             } while (menu_choice < 1 || menu_choice > 4 || correct != 1);
+            platform_console_clear();
             switch (menu_choice) {
             case 1: // load actual game
                 // check if there is a save
                 if (!save_file_exists(SAVE_FOLDER SAVE_FILE_NAME)) {
-                    printf("There is no game to resume.\n");
+                    animate_printf("There is no game to resume.\n");
+                    platform_sleep(1000);
                     actual_menu = MENU_MAIN;
                 } else {
+                    animate_printf("Loading your game...");
+                    platform_sleep(750);
                     load_game(map, &player_number, treasure_found, monster_killed,
                               round_number, treasure, will_teleport, artifact_found,
                               player_x, player_y, &active_weapon, player_class,
@@ -97,21 +103,19 @@ int main(int argc, char const *argv[]) {
                 break;
             case 4: // quit
                 menu_running = false;
-                printf("Goodbye! See you again!\n");
+                animate_printf("Goodbye! See you again!\n");
+                platform_sleep(2000);
                 break;
             }
         } else if (actual_menu == MENU_GAME) {
             // runs the game for the round
             while (game_running) {
+                platform_console_clear();
                 // [turn - PLAYER_BLUE] gives the correct number in the array depending
                 // of the turn, whatever is the number of player
                 turn_number = turn - PLAYER_BLUE;
                 // count the round for each players
                 round_number[turn_number]++;
-                save_game(map, player_number, treasure_found, monster_killed,
-                          round_number, treasure, will_teleport, artifact_found,
-                          player_x, player_y, active_weapon, player_class, player_name,
-                          turn, is_winner);
 
                 if (is_winner) {
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
@@ -122,7 +126,8 @@ int main(int argc, char const *argv[]) {
                                    (i == turn_number) ? 1 : 0);
                     }
                     u32 answer;
-                    printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
+                    platform_console_clear();
+                    animate_printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
                     do {
                         printf(">> ");
                         correct = scanf("%d", &answer);
@@ -135,7 +140,9 @@ int main(int argc, char const *argv[]) {
                         actual_menu = MENU_MAIN;
                         break;
                     } else {
-                        printf("Readying up to make a new game...\n");
+                        platform_console_clear();
+                        animate_printf("Readying up to make a new game...\n");
+                        platform_sleep(750);
                         map_setup(map);
                         reset_variables(&player_number, treasure_found, monster_killed,
                                         round_number, treasure, will_teleport,
@@ -149,7 +156,7 @@ int main(int argc, char const *argv[]) {
                 }
 
                 // say whose turn is who, with the right color
-                printf("It's ");
+                animate_printf("It's ");
                 switch (turn) {
                 case PLAYER_BLUE:
                     platform_color_change(COLOR_BLUE, COLOR_EMPTY);
@@ -167,9 +174,9 @@ int main(int argc, char const *argv[]) {
                     platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
                     break;
                 }
-                printf("%s", player_name[turn_number]);
+                animate_printf(player_name[turn_number]);
                 platform_color_change(COLOR_EMPTY, COLOR_EMPTY);
-                printf(" turn!\n\n");
+                animate_printf(" turn!\n\n");
 
                 //  show the board
                 map_print(map);
@@ -193,6 +200,11 @@ int main(int argc, char const *argv[]) {
                            player_class[turn_number], active_weapon, player_number,
                            &will_teleport[turn_number], &player_x[turn_number],
                            &player_y[turn_number], &is_winner);
+
+                save_game(map, player_number, treasure_found, monster_killed,
+                          round_number, treasure, will_teleport, artifact_found,
+                          player_x, player_y, active_weapon, player_class, player_name,
+                          turn, is_winner);
             }
         }
     }

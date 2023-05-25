@@ -1,11 +1,13 @@
 #ifndef HEADER_MENU
 #define HEADER_MENU 1
 
-// nouvelle partie, sauvegarde --> charger la partie, montrer les scores, quitter le jeu
 #include "defines.h"
 #include "game.h"
 #include "save.h"
 #include "sort.h"
+
+// time to sleep before printing the next character
+#define ANIMATION_SPEED 10
 
 typedef enum Menu_Type {
     MENU_MAIN,

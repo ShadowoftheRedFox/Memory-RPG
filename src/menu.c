@@ -20,9 +20,9 @@ void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGT
     }
 
     i32 correct = 0;
-    printf("Loading a new game...\n");
+    animate_printf("Loading a new game...\n");
     // ask the number of player
-    printf("How much player will play? You can play up to 4 peoples.\n");
+    animate_printf("How much player will play? You can play up to 4 peoples.\n");
     do {
         printf(">> ");
         correct = scanf("%d", player_number);
@@ -31,7 +31,10 @@ void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGT
 
     // ask player names
     for (u32 count = 0; count < *player_number; count++) {
-        printf("Type the name of the player %d: ", count + 1);
+        char temp[40];
+        sprintf(temp, "Type the name of the player %d: ", count + 1);
+        animate_printf(temp);
+
         scanf("%s", player_name[count]);
         empty_stdin_buffer();
         // ask the player his class
@@ -142,7 +145,8 @@ void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 mon
 void score_menu() {
     // exit if no score file found
     if (!save_file_exists(SAVE_FOLDER SCORE_FILE_NAME)) {
-        printf("No one played the game yet. There is no score to display.\n");
+        animate_printf("No one played the game yet. There is no score to display.\n");
+        platform_sleep(750);
         return;
     }
 
@@ -153,7 +157,8 @@ void score_menu() {
     // menu for the score
     while (score_running) {
         // choice for each score types
-        printf("SCORE\n1 - TOP PLAYERS\n2 - TOP KILLERS\n3 - TOP TREASURES HUNTERS\n4 - TOP WINNERS\n5 - BACK TO MAIN MENU\n");
+        platform_console_clear();
+        animate_printf("Score:\n1 - Top players\n2 - Top killers\n3 - Top treasures hunters\n4 - Top winners\n5 - Back to main menu\n");
         do {
             printf(">> ");
             correct = scanf("%d", &menu);
@@ -162,19 +167,19 @@ void score_menu() {
         // display wanted menu
         switch (menu) {
         case 1:
-            printf("Those are the top players with the best scores:\n\n");
+            animate_printf("Those are the top players with the best scores:\n\n");
             show_score(SORT_TOP);
             break;
         case 2:
-            printf("Those are the top players with the biggest amount of kill:\n\n");
+            animate_printf("Those are the top players with the biggest amount of kill:\n\n");
             show_score(SORT_KILL);
             break;
         case 3:
-            printf("Those are the top players with the biggest amount of treasure found:\n\n");
+            animate_printf("Those are the top players with the biggest amount of treasure found:\n\n");
             show_score(SORT_TREASURE);
             break;
         case 4:
-            printf("Those are the top players with the biggest amount of win:\n\n");
+            animate_printf("Those are the top players with the biggest amount of win:\n\n");
             show_score(SORT_WIN);
             break;
         case 5:
@@ -246,6 +251,7 @@ void show_score(Sort_Type type) {
     FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "rb");
     if (file == NULL) {
         printf("Failed to get the save file in show_score.\n");
+        exit(1);
     }
 
     // get each struct and save it in the array
@@ -297,7 +303,27 @@ void show_score(Sort_Type type) {
 
 void confirm() {
     u8 toto;
-    printf("\nPress any key to continue...");
-    scanf("%c", &toto);
-    empty_stdin_buffer();
+    i32 correct = 0;
+    animate_printf("\nPress any key to continue...");
+    correct = scanf("%c", &toto);
+    if (correct != 1) {
+        empty_stdin_buffer();
+    }
+    platform_console_clear();
+}
+
+void animate_printf(const char *text) {
+    // verify parameters
+    if (text == NULL) {
+        printf("text is null in animate_printf\n");
+        exit(1);
+    }
+    u32 i = 0;
+    while (text[i] != '\0') {
+        printf("%c", text[i]);
+        // force fflush to display
+        fflush(stdout);
+        platform_sleep(ANIMATION_SPEED);
+        i++;
+    }
 }
