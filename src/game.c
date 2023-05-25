@@ -1,7 +1,7 @@
 #include "./game.h"
 #include "./platform.h"
 
-// TODO add sleep and console clear
+// TODO add sleep and console clear, print animation like ori
 
 Board_Case **map_create() {
     // here malloc(size); = platform_allocate(size);
@@ -1066,7 +1066,7 @@ void game_choose_class(Class_Type player_class[4], u32 count) {
         break;
     case CLASS_RANGER:
         printf("You choose the ranger. You will seek the powerful pet control "
-               "stick, to form an army of cats.\n");
+               "staff, to form an army of cats.\n");
         break;
     case CLASS_WARRIOR:
         printf("You choose the warrior. You will seek for the mighty sword of "

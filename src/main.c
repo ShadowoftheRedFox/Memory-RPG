@@ -67,7 +67,7 @@ int main(int argc, char const *argv[]) {
             switch (menu_choice) {
             case 1: // load actual game
                 // check if there is a save
-                if (!save_file_exists()) {
+                if (!save_file_exists(SAVE_FOLDER SAVE_FILE_NAME)) {
                     printf("There is no game to resume.\n");
                     actual_menu = MENU_MAIN;
                 } else {
@@ -95,9 +95,7 @@ int main(int argc, char const *argv[]) {
                 game_running = true;
                 break;
             case 3: // score
-                    // TODO if there is no score.save, just say there is no score
-                show_score(5);
-
+                score_menu();
                 break;
             case 4: // quit
                 menu_running = false;

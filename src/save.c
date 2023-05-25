@@ -3,8 +3,8 @@
 #include "./platform.h"
 #include <string.h>
 
-b8 save_file_exists() {
-    FILE *f = fopen(SAVE_FOLDER SAVE_FILE_NAME, "r");
+b8 save_file_exists(const char *path) {
+    FILE *f = fopen(path, "r");
     if (f == NULL) {
         return false;
     }
@@ -131,9 +131,14 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
 b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 monster_killed, u32 game_won) {
     Save_Player_Score file_struct;
     Save_Player_Score temp;
+    u32 count = 0;
     // TODO check other parameters
 
-    FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "ab+");
+    FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "rb+");
+    if (file == NULL) {
+        file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "wb+");
+    }
+
     if (file == NULL) {
         printf("Failed to get the save file in save_score.\n");
         return false;
@@ -142,54 +147,34 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
     // fill our struct to save
     strcpy(file_struct.player_name, player_name);
     file_struct.treasure_found = treasure_found;
-    file_struct.game_won = game_won;
     file_struct.monster_killed = monster_killed;
+    file_struct.game_won = game_won;
 
     // move the cursor as we read
     // while == 1 because we want 1 item successfully read
     while (fread(&temp, sizeof(Save_Player_Score), 1, file) == 1) {
-        printf("went through player: %s\n", temp.player_name);
-
         // check if the name is the same
         if (strcmp(temp.player_name, file_struct.player_name) == 0) {
-            printf("player found: %s\n", temp.player_name);
-            // get back just before the wanted struct
-            fseek(file, (long)(-sizeof(Save_Player_Score)), SEEK_CUR);
             // update the found struct
             file_struct.treasure_found += temp.treasure_found;
-            file_struct.game_won += temp.game_won;
             file_struct.monster_killed += temp.monster_killed;
-            // write the new data
-            fwrite(&file_struct, sizeof(Save_Player_Score), 1, file);
-            fclose(file);
-            return true;
+            file_struct.game_won += temp.game_won;
+            break;
         }
+        // follow the structure position
+        count++;
     }
 
-    printf("player not found %s, adding after\n", file_struct.player_name);
-    // if we are here, there is no one with the same name, so add it on the file
-    fwrite(&file_struct, sizeof(Save_Player_Score), 1, file);
+    // write the new data at the position of the wanted structure
+    fseek(file, (long)(sizeof(Save_Player_Score)) * count, SEEK_SET);
+    // check if successful
+    if (fwrite(&file_struct, sizeof(Save_Player_Score), 1, file) != 1) {
+        printf("failed to update data, %s\n", player_name);
+        fclose(file);
+        return false;
+    }
 
     // close the stream
     fclose(file);
     return true;
-}
-
-void show_score(u32 amount_to_show) {
-    Save_Player_Score temp;
-
-    FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "rb");
-    if (file == NULL) {
-        printf("Failed to get the save file in show_score.\n");
-    }
-
-    // move the cursor as we read
-    while (fread(&temp, sizeof(temp), 1, file) == 1) {
-        // print the score
-        printf("%s: %d\n", temp.player_name,
-               temp.game_won * SCORE_WIN + temp.monster_killed * SCORE_KILL + temp.treasure_found * SCORE_TREASURE);
-    }
-
-    // close the stream
-    fclose(file);
 }
