@@ -47,5 +47,5 @@ clean:
 	if exist $(OBJ_DIR) rmdir /s /q $(SAVE_DIR)
 
 # build o files
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(OBJ_DIR) # compile .c to .o object
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(OBJ_DIR) objdir # compile .c to .o object
 	$(CC) -c $< -o $@

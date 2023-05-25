@@ -685,7 +685,7 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
         *player_will_teleport = true;
         break;
     case CASE_OBJECT_TOTEM:
-        game_transmut(map);
+        game_transmut(map, *player_position_x, *player_position_y);
         move_player_image(map, *player_position_x, *player_position_y, *turn);
         *treasure_found = 0;
         is_artifact_found = false;
@@ -849,7 +849,7 @@ void move_player_image(Board_Case **map, u32 player_position_x,
     platform_sleep(3000);
 }
 
-void game_transmut(Board_Case **map) {
+void game_transmut(Board_Case **map, u32 player_position_x, u32 player_position_y) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in game_transmut\n");
@@ -891,22 +891,10 @@ void game_transmut(Board_Case **map) {
              ((case_input) % 10 == 2 && (case_input) / 10 == MAP_SIZE - 2) ||
              ((case_input) % 10 == MAP_SIZE - 2 && (case_input) / 10 == 4));
 
-    // find the totem and switch the choosen case with it
-    for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
-        for (u32 x = 0; x <= (MAP_SIZE - 2); x++) {
-            if (map[y][x].content == CASE_OBJECT_TOTEM) {
-                // BUGS totem do not swap withthe choosen case
-                temp = map[y][x];
-                map[y][x] = map[(case_input) / 10][(case_input) % 10];
-                map[(case_input) / 10][(case_input) % 10] = temp;
-                found = true;
-                break;
-            }
-        }
-        if (found == true) {
-            break;
-        }
-    }
+    // the totem is on the player position, so switch the content of this case
+    temp.content = map[player_position_y][player_position_x].content;
+    map[player_position_y][player_position_x].content = map[(case_input) / 10][(case_input) % 10].content;
+    map[(case_input) / 10][(case_input) % 10].content = temp.content;
 
     animate_printf("The totem has beenn switched with your choosen case!\n");
     platform_sleep(750);

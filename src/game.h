@@ -114,7 +114,7 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found, u32 *mon
 // change the turn to the next player
 void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y);
 // switch a case choosen by the player with the totem case
-void game_transmut(Board_Case **map);
+void game_transmut(Board_Case **map, u32 player_position_x, u32 player_position_y);
 // choose a weapon before each round
 void game_choose_weapon(Choosen_Weapon *weapon);
 // choose a class before each start of the game
