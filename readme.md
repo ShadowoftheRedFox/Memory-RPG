@@ -26,7 +26,7 @@ To win the game, the player need to find the artifact of its caracter and a trea
 
 ## Group
 
-<div class="myDIV">Our group is composed of Hugo LÉON MÉRINO , Wiktor WOJTAN and <span title="The only girl in the group ✨">Héloïse DEY</span>. </div><span class="hide">They are awesome students, they would love to have a 20/20.</span>
+Our group is composed of Hugo LÉON MÉRINO , Wiktor WOJTAN and <span title="The only girl in the group ✨">Héloïse DEY</span>.
 
 ## Files
 
@@ -71,16 +71,3 @@ Here is a list of known bugs:
 
 # CY Tech
 ![CY tech icon](./images/CY-Tech.png)
-
-<style>
-.hide {
-  display: none;
-}
-    
-.myDIV:hover + .hide {
-  display: block;
-  background: -webkit-linear-gradient(45deg, #09009f, #00ff95 80%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-</style>
