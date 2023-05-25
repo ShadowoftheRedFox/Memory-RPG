@@ -42,4 +42,8 @@ void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 mon
 void score_menu();
 // we will suppose that there is not enough player to display to think about handling items well the amount of RAM taken
 void show_score(Sort_Type type);
+// wait for a user interaction
+void confirm();
+// animate the printf
+void animate_printf(const char *text);
 #endif

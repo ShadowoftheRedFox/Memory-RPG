@@ -412,18 +412,26 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount,
         exit(1);
     }
     if (turn == NULL || *turn >= TYPE_UNKNOWN || *turn < PLAYER_BLUE) {
-        printf("turn is invalid in player_move\n");
+        printf("turn is out of range in player_move\n");
         exit(1);
     }
-    if (player_position_x == NULL) {
-        printf("player_position_x is null in player_move\n");
+    if (player_position_x == NULL || *player_position_x < 0 || *player_position_x >= MAP_SIZE) {
+        printf("player_position_x is out of range in player_move\n");
         exit(1);
     }
-    if (player_position_y == NULL) {
-        printf("player_position_y is null in player_move\n");
+    if (player_position_y == NULL || *player_position_y < 0 || *player_position_y >= MAP_SIZE) {
+        printf("player_position_y is out of range in player_move\n");
         exit(1);
     }
-    if (player_amount > 4) {
+    if (treasure_found == NULL) {
+        printf("treasure_found is null in player_move\n");
+        exit(1);
+    }
+    if (is_artifact_found == NULL) {
+        printf("is_artifact_found is null in player_move\n");
+        exit(1);
+    }
+    if (player_amount > 4 || player_amount <= 0) {
         printf("player_amount is out of range in player_move\n");
         exit(1);
     }
@@ -511,24 +519,19 @@ void player_move(Board_Case **map, Case_Type *turn, u32 player_amount,
     } while (correct != 1 || moved == false);
 }
 
-void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x,
+void player_teleport(Board_Case **map, u32 *player_position_x,
                      u32 *player_position_y) {
     // verify parameters
     if (map == NULL) {
         printf("map is null in player_teleport\n");
         exit(1);
     }
-    // BUG we don't need the turn?
-    if (turn == NULL || *turn >= TYPE_UNKNOWN || *turn < PLAYER_BLUE) {
-        printf("turn is invalid in player_teleport\n");
+    if (player_position_x == NULL || *player_position_x < 0 || *player_position_x >= MAP_SIZE) {
+        printf("player_position_x is out of range in player_teleport\n");
         exit(1);
     }
-    if (player_position_x == NULL) {
-        printf("player_position_x is null in player_teleport\n");
-        exit(1);
-    }
-    if (player_position_y == NULL) {
-        printf("player_position_y is null in player_teleport\n");
+    if (player_position_y == NULL || *player_position_y < 0 || *player_position_y >= MAP_SIZE) {
+        printf("player_position_y is out of range in player_teleport\n");
         exit(1);
     }
 
@@ -593,15 +596,15 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
         printf("player_will_teleport is null in game_logic\n");
         exit(1);
     }
-    if (player_position_x == NULL || *player_position_x >= MAP_SIZE) {
+    if (player_position_x == NULL || *player_position_x < 0 || *player_position_x >= MAP_SIZE) {
         printf("player_position_x is out of range in game_logic\n");
         exit(1);
     }
-    if (player_position_y == NULL || *player_position_y >= MAP_SIZE) {
+    if (player_position_y == NULL || *player_position_y < 0 || *player_position_y >= MAP_SIZE) {
         printf("player_position_y is out of range in game_logic\n");
         exit(1);
     }
-    if (active_weapon >= WEAPON_UNKNOWN) {
+    if (active_weapon >= WEAPON_UNKNOWN || active_weapon < 0) {
         printf("active_weapon is out of range in game_logic\n");
         exit(1);
     }
@@ -609,12 +612,16 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
         printf("player_amount is out of range in game_logic\n");
         exit(1);
     }
-    if (player_class >= CLASS_UNKNOWN) {
+    if (player_class >= CLASS_UNKNOWN || player_class < 0) {
         printf("player_class is out of range in game_logic\n");
         exit(1);
     }
     if (turn == NULL || *turn >= TYPE_UNKNOWN || *turn < PLAYER_BLUE) {
-        printf("turn is invalid in game_logic\n");
+        printf("turn is out of range in game_logic\n");
+        exit(1);
+    }
+    if (is_winner == NULL) {
+        printf("is_winner is out of range in game_logic\n");
         exit(1);
     }
 
@@ -776,8 +783,25 @@ void game_logic(Board_Case **map, Case_Type *turn, u32 *treasure_found,
 
 void move_player_image(Board_Case **map, u32 player_position_x,
                        u32 player_position_y, Case_Type turn) {
+    if (map == NULL) {
+        printf("map is null in move_player_image\n");
+        exit(1);
+    }
+    if (player_position_x < 0 || player_position_x >= MAP_SIZE) {
+        printf("player_position_x is out of range in move_player_image\n");
+        exit(1);
+    }
+    if (player_position_y < 0 || player_position_y >= MAP_SIZE) {
+        printf("player_position_y is out of range in move_player_image\n");
+        exit(1);
+    }
+    if (turn >= TYPE_UNKNOWN || turn < PLAYER_BLUE) {
+        printf("turn is out of range in move_player_image\n");
+        exit(1);
+    }
+
     map[player_position_y][player_position_x].empty = true;
-    // TODO can be optimized in a single loop
+    // remove the player image from it's old position
     for (int y = 0; y < MAP_SIZE; y++) {
         for (int x = 0; x < MAP_SIZE; x++) {
             if (map[y][x].player == turn) {
@@ -797,6 +821,11 @@ void game_transmut(Board_Case **map) {
         exit(1);
     }
 
+    i32 correct = 0;
+    u32 case_input = -1;
+    Board_Case temp;
+    b8 found = false;
+
     printf("You found a transmutation totem.\nChoose a case to switch position with the totem.\n\n");
 
     // will loop throught all case from above
@@ -815,8 +844,6 @@ void game_transmut(Board_Case **map) {
     }
 
     // ask the player the new coordinates
-    i32 correct = 0;
-    u32 case_input = -1;
     do {
         printf(">> ");
         correct = scanf("%d", &case_input);
@@ -828,17 +855,19 @@ void game_transmut(Board_Case **map) {
              ((case_input) % 10 == 2 && (case_input) / 10 == MAP_SIZE - 2) ||
              ((case_input) % 10 == MAP_SIZE - 2 && (case_input) / 10 == 4));
 
-    // switch the choosen case and the totem
-    Board_Case temp;
-    // TODO loop can be optimized
+    // find the totem and switch the choosen case with it
     for (u32 y = 0; y <= (MAP_SIZE - 2); y++) {
         for (u32 x = 0; x <= (MAP_SIZE - 2); x++) {
             if (map[y][x].content == CASE_OBJECT_TOTEM) {
                 temp = map[y][x];
                 map[y][x] = map[(case_input) / 10][(case_input) % 10];
                 map[(case_input) / 10][(case_input) % 10] = temp;
+                found = true;
                 break;
             }
+        }
+        if (found == true) {
+            break;
         }
     }
 
@@ -853,11 +882,19 @@ void game_next_turn(Board_Case **map, Case_Type *turn, u32 player_amount,
         exit(1);
     }
     if (turn == NULL || *turn >= TYPE_UNKNOWN || *turn < PLAYER_BLUE) {
-        printf("turn is invalid in game_next_turn\n");
+        printf("turn is out of range in game_next_turn\n");
         exit(1);
     }
-    if (player_amount > 4) {
+    if (player_amount > 4 || player_amount <= 0) {
         printf("player_amout is out of range in game_next_turn\n");
+        exit(1);
+    }
+    if (player_position_x == NULL || *player_position_x < 0 || *player_position_x >= MAP_SIZE) {
+        printf("player_position_x is out of range in game_next_turn\n");
+        exit(1);
+    }
+    if (player_position_y == NULL || *player_position_y < 0 || *player_position_y >= MAP_SIZE) {
+        printf("player_position_y is out of range in game_next_turn\n");
         exit(1);
     }
 
@@ -902,26 +939,25 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH],
               u32 round_number) {
     // verify parameters
     if (turn >= TYPE_UNKNOWN || turn < PLAYER_BLUE) {
-        printf("turn is invalid in game_win\n");
+        printf("turn is out of range in game_win\n");
         exit(1);
     }
     if (player_name == NULL) {
         printf("player_name is null in game_win\n");
         exit(1);
     }
-
-    i32 correct = 0;
-    i32 answer = 0;
-
-    // TODO save the score into the score files
+    if (round_number < 0) {
+        printf("round_number is out of range in game_win\n");
+        exit(1);
+    }
 
     printf("Well done %s! You won after %d rounds!\n", player_name, round_number);
 }
 
 void game_choose_weapon(Choosen_Weapon *weapon) {
     // verify parameters
-    if (weapon == NULL) {
-        printf("weapon is null in game_choose_weapon\n");
+    if (weapon == NULL || *weapon >= WEAPON_UNKNOWN || *weapon < 0) {
+        printf("weapon is out of range in game_choose_weapon\n");
         exit(1);
     }
 

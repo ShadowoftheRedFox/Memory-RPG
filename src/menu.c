@@ -4,6 +4,21 @@
 #include <stdlib.h>
 
 void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Class_Type player_class[MAX_PLAYER]) {
+    // verify parameters
+    if (player_number == NULL) {
+        // we don't check for out of range because we'll edit it here
+        printf("player_number is null in new_game\n");
+        exit(1);
+    }
+    if (player_name == NULL) {
+        printf("player_name is null in new_game\n");
+        exit(1);
+    }
+    if (player_class == NULL) {
+        printf("player_class is null in new_game\n");
+        exit(1);
+    }
+
     i32 correct = 0;
     printf("Loading a new game...\n");
     // ask the number of player
@@ -28,8 +43,66 @@ void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 mon
                      u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
                      u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
                      char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner) {
+    // verify parameters, we don't check for out of range since we'll edit them here
+    if (player_number == NULL) {
+        printf("player_number is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (treasure_found == NULL) {
+        printf("treasure_found is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (monster_killed == NULL) {
+        printf("monster_killed is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (round_number == NULL) {
+        printf("round_number is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (treasure == NULL) {
+        printf("treasure is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (will_teleport == NULL) {
+        printf("will_teleport is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (artifact_found == NULL) {
+        printf("artifact_found is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (player_x == NULL) {
+        printf("player_x is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (player_y == NULL) {
+        printf("player_y is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (active_weapon == NULL) {
+        printf("active_weapon is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (player_class == NULL) {
+        printf("player_class is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (player_name == NULL) {
+        printf("player_name is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (turn == NULL) {
+        printf("turn is null in reset_varaiables\n");
+        exit(1);
+    }
+    if (is_winner == NULL) {
+        printf("is_winner is null in reset_varaiables\n");
+        exit(1);
+    }
+
     // for counting the score
-    player_number = 0;
+    *player_number = 0;
     platform_zero_memory(treasure_found, sizeof(u32) * MAX_PLAYER);
     platform_zero_memory(monster_killed, sizeof(u32) * MAX_PLAYER);
 
@@ -69,7 +142,7 @@ void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 mon
 void score_menu() {
     // exit if no score file found
     if (!save_file_exists(SAVE_FOLDER SCORE_FILE_NAME)) {
-        printf("No on player the game yet. There is no score to display.\n");
+        printf("No one played the game yet. There is no score to display.\n");
         return;
     }
 
@@ -115,6 +188,24 @@ void score_menu() {
 }
 
 b8 add_alloc(Save_Player_Score **array, u32 index_target, u32 current_size, Save_Player_Score *new_element) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in add_alloc\n");
+        exit(1);
+    }
+    if (new_element == NULL) {
+        printf("new_element is null in add_alloc\n");
+        exit(1);
+    }
+    if (index_target < 0) {
+        printf("index_target is out of range in add_alloc\n");
+        exit(1);
+    }
+    if (current_size < 0) {
+        printf("current_size is out of range in add_alloc\n");
+        exit(1);
+    }
+
     if (index_target >= current_size) {
         // we want to write in array[index_target], so it size must be at least current_size + 1
         current_size = index_target + 1;
@@ -137,6 +228,12 @@ b8 add_alloc(Save_Player_Score **array, u32 index_target, u32 current_size, Save
 }
 
 void show_score(Sort_Type type) {
+    // verify parameters
+    if (type < 0 || type >= SORT_UNKNOWN) {
+        printf("type is out of range in show_score\n");
+        exit(1);
+    }
+
     // size of our array
     u32 array_size = 0;
     // number of save struct found
@@ -166,22 +263,26 @@ void show_score(Sort_Type type) {
         for (u32 i = 0; i < struct_found; i++) {
             printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].monster_killed);
         }
+        confirm();
         break;
     case SORT_WIN:
         for (u32 i = 0; i < struct_found; i++) {
             printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].game_won);
         }
+        confirm();
         break;
     case SORT_TREASURE:
         for (u32 i = 0; i < struct_found; i++) {
             printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].treasure_found);
         }
+        confirm();
         break;
     case SORT_TOP:
         for (u32 i = 0; i < struct_found; i++) {
             printf("%d: %s:\t%d\n", i + 1, array[i].player_name,
                    array[i].game_won * SCORE_WIN + array[i].monster_killed * SCORE_KILL + array[i].treasure_found * SCORE_TREASURE);
         }
+        confirm();
         break;
     default:
         printf("type is our of range in show_score: %d\n", type);
@@ -192,4 +293,11 @@ void show_score(Sort_Type type) {
     platform_free(array);
     // close the stream
     fclose(file);
+}
+
+void confirm() {
+    u8 toto;
+    printf("\nPress any key to continue...");
+    scanf("%c", &toto);
+    empty_stdin_buffer();
 }

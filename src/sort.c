@@ -4,6 +4,16 @@
 
 // function to swap elements
 void swap(Save_Player_Score *a, Save_Player_Score *b) {
+    // verify parameters
+    if (a == NULL) {
+        printf("a is null in swap\n");
+        exit(1);
+    }
+    if (b == NULL) {
+        printf("b is null in swap\n");
+        exit(1);
+    }
+
     Save_Player_Score t = *a;
     *a = *b;
     *b = t;
@@ -11,6 +21,19 @@ void swap(Save_Player_Score *a, Save_Player_Score *b) {
 
 // function to find the partition position
 i32 partition_top(Save_Player_Score array[], i32 low, i32 high) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in partition_top\n");
+        exit(1);
+    }
+    if (low < 0) {
+        printf("low is out of range in partition_top\n");
+        exit(1);
+    }
+    if (high < 0) {
+        printf("high is out of range in partition_top\n");
+        exit(1);
+    }
 
     // select the rightmost element as pivot
     Save_Player_Score pivot = array[high];
@@ -41,6 +64,19 @@ i32 partition_top(Save_Player_Score array[], i32 low, i32 high) {
 }
 
 i32 partition_kill(Save_Player_Score array[], i32 low, i32 high) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in partition_kill\n");
+        exit(1);
+    }
+    if (low < 0) {
+        printf("low is out of range in partition_kill\n");
+        exit(1);
+    }
+    if (high < 0) {
+        printf("high is out of range in partition_kill\n");
+        exit(1);
+    }
 
     // select the rightmost element as pivot
     Save_Player_Score pivot = array[high];
@@ -70,6 +106,19 @@ i32 partition_kill(Save_Player_Score array[], i32 low, i32 high) {
 }
 
 i32 partition_treasure(Save_Player_Score array[], i32 low, i32 high) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in partition_treasure\n");
+        exit(1);
+    }
+    if (low < 0) {
+        printf("low is out of range in partition_treasure\n");
+        exit(1);
+    }
+    if (high < 0) {
+        printf("high is out of range in partition_treasure\n");
+        exit(1);
+    }
 
     // select the rightmost element as pivot
     Save_Player_Score pivot = array[high];
@@ -99,6 +148,19 @@ i32 partition_treasure(Save_Player_Score array[], i32 low, i32 high) {
 }
 
 i32 partition_win(Save_Player_Score array[], i32 low, i32 high) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in partition_win\n");
+        exit(1);
+    }
+    if (low < 0) {
+        printf("low is out of range in partition_win\n");
+        exit(1);
+    }
+    if (high < 0) {
+        printf("high is out of range in partition_win\n");
+        exit(1);
+    }
 
     // select the rightmost element as pivot
     Save_Player_Score pivot = array[high];
@@ -128,6 +190,24 @@ i32 partition_win(Save_Player_Score array[], i32 low, i32 high) {
 }
 
 void quickSort(Save_Player_Score array[], i32 low, i32 high, Sort_Type type) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in quickSort\n");
+        exit(1);
+    }
+    if (low < 0) {
+        printf("low is out of range in quickSort\n");
+        exit(1);
+    }
+    if (high < 0) {
+        printf("high is out of range in quickSort\n");
+        exit(1);
+    }
+    if (type < 0 || type >= SORT_UNKNOWN) {
+        printf("type is out of range in quickSort\n");
+        exit(1);
+    }
+
     if (low < high) {
         // find the pivot element such as
         // elements smaller than pivot are on left of pivot

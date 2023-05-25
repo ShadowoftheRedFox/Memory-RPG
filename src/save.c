@@ -4,6 +4,12 @@
 #include <string.h>
 
 b8 save_file_exists(const char *path) {
+    // verify parameters
+    if (path == NULL) {
+        printf("path is null in save_file_exists\n");
+        exit(1);
+    }
+
     FILE *f = fopen(path, "r");
     if (f == NULL) {
         return false;
@@ -26,7 +32,62 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
         printf("Map is null on save_game\n");
         exit(2);
     }
-    // TODO check other parameters
+    if (player_number < 0 || player_number > MAX_PLAYER) {
+        printf("player_number is out of range in save_game\n");
+        exit(1);
+    }
+    if (treasure_found == NULL) {
+        printf("treasure_found is null in save_game\n");
+        exit(1);
+    }
+    if (monster_killed == NULL) {
+        printf("monster_killed is null in save_game\n");
+        exit(1);
+    }
+    if (round_number == NULL) {
+        printf("round_number is null in save_game\n");
+        exit(1);
+    }
+    if (treasure == NULL) {
+        printf("treasure is null in save_game\n");
+        exit(1);
+    }
+    if (will_teleport == NULL) {
+        printf("will_teleport is null in save_game\n");
+        exit(1);
+    }
+    if (artifact_found == NULL) {
+        printf("artifact_found is null in save_game\n");
+        exit(1);
+    }
+    if (player_x == NULL) {
+        printf("player_x is null in save_game\n");
+        exit(1);
+    }
+    if (player_y == NULL) {
+        printf("player_y is null in save_game\n");
+        exit(1);
+    }
+    if (active_weapon < 0 || active_weapon >= WEAPON_UNKNOWN) {
+        printf("active_weapon is out of range in save_game\n");
+        exit(1);
+    }
+    if (player_class == NULL) {
+        printf("player_class is null in save_game\n");
+        exit(1);
+    }
+    if (player_name == NULL) {
+        printf("player_name is null in save_game\n");
+        exit(1);
+    }
+    if (turn < PLAYER_BLUE || turn >= TYPE_UNKNOWN) {
+        printf("turn is out of range in save_game\n");
+        exit(1);
+    }
+    if (is_winner != true && is_winner != false) {
+        printf("is_winner is out of range in save_game\n");
+        exit(1);
+    }
 
     //  create the file handle
     FILE *save_file = fopen(SAVE_FOLDER SAVE_FILE_NAME, "wb");
@@ -82,11 +143,63 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
         printf("Map is null on load_game\n");
         exit(2);
     }
-    if (turn == NULL) {
-        printf("turn is null on load_game\n");
-        exit(2);
+    if (player_number == NULL || *player_number < 0 || *player_number > MAX_PLAYER) {
+        printf("player_number is out of range in load_game\n");
+        exit(1);
     }
-    // TODO check other parameters
+    if (treasure_found == NULL) {
+        printf("treasure_found is null in load_game\n");
+        exit(1);
+    }
+    if (monster_killed == NULL) {
+        printf("monster_killed is null in load_game\n");
+        exit(1);
+    }
+    if (round_number == NULL) {
+        printf("round_number is null in load_game\n");
+        exit(1);
+    }
+    if (treasure == NULL) {
+        printf("treasure is null in load_game\n");
+        exit(1);
+    }
+    if (will_teleport == NULL) {
+        printf("will_teleport is null in load_game\n");
+        exit(1);
+    }
+    if (artifact_found == NULL) {
+        printf("artifact_found is null in load_game\n");
+        exit(1);
+    }
+    if (player_x == NULL) {
+        printf("player_x is null in load_game\n");
+        exit(1);
+    }
+    if (player_y == NULL) {
+        printf("player_y is null in load_game\n");
+        exit(1);
+    }
+    if (active_weapon == NULL || *active_weapon < 0 || *active_weapon >= WEAPON_UNKNOWN) {
+        printf("active_weapon is out of range in load_game\n");
+        exit(1);
+    }
+    if (player_class == NULL) {
+        printf("player_class is null in load_game\n");
+        exit(1);
+    }
+    if (player_name == NULL) {
+        printf("player_name is null in load_game\n");
+        exit(1);
+    }
+    if (turn == NULL || *turn < PLAYER_BLUE || *turn >= TYPE_UNKNOWN) {
+        printf("turn is out of range in load_game\n");
+        exit(1);
+    }
+    if (is_winner == NULL || *is_winner != true && *is_winner != false) {
+        printf("is_winner is out of range in load_game\n");
+        exit(1);
+    }
+
     //  create the file handle
     FILE *save_file = fopen(SAVE_FOLDER SAVE_FILE_NAME, "rb");
     if (save_file == NULL) {
@@ -129,10 +242,27 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
 }
 
 b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 monster_killed, u32 game_won) {
+    // verify parameters
+    if (player_name == NULL) {
+        printf("player_name is null in save_score\n");
+        exit(1);
+    }
+    if (monster_killed < 0) {
+        printf("monster_killed is out of range in save_score\n");
+        exit(1);
+    }
+    if (treasure_found < 0) {
+        printf("treasure_found is out of range in save_score\n");
+        exit(1);
+    }
+    if (game_won < 0) {
+        printf("game_won is out of range in save_score\n");
+        exit(1);
+    }
+
     Save_Player_Score file_struct;
     Save_Player_Score temp;
     u32 count = 0;
-    // TODO check other parameters
 
     FILE *file = fopen(SAVE_FOLDER SCORE_FILE_NAME, "rb+");
     if (file == NULL) {

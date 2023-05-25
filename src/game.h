@@ -85,6 +85,7 @@ typedef enum Choosen_Weapon {
     WEAPON_UNKNOWN
 } Choosen_Weapon;
 
+// struct for each case of the board
 typedef struct Board_Case {
     // if the case has been discovered or not
     b8 hidden;
@@ -125,7 +126,7 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH], u32 round_nu
 void move_player_image(Board_Case **map, u32 player_position_x, u32 player_position_y, Case_Type turn);
 
 // teleport the player on any hidden case he wants
-void player_teleport(Board_Case **map, Case_Type *turn, u32 *player_position_x, u32 *player_position_y);
+void player_teleport(Board_Case **map, u32 *player_position_x, u32 *player_position_y);
 //  move the current player
 void player_move(Board_Case **map, Case_Type *turn, u32 player_amount, u32 *player_position_x, u32 *player_position_y,
                  u32 *treasure_found, b8 *is_artifact_found);

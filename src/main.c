@@ -4,7 +4,7 @@
 #include "./save.h"
 
 int main(int argc, char const *argv[]) {
-    // setup game
+    // setup game rand
     platform_srand();
 
     // create the map
@@ -52,8 +52,6 @@ int main(int argc, char const *argv[]) {
     // player yellow
     player_x[3] = 2;
     player_y[3] = MAP_SIZE - 1;
-
-    // TODO best score leaderboard?
 
     // runs menu
     while (menu_running) {
@@ -117,8 +115,12 @@ int main(int argc, char const *argv[]) {
 
                 if (is_winner) {
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
-                    save_score(player_name[turn_number], treasure_found[turn_number],
-                               monster_killed[turn_number], 1);
+                    // save the score of each player
+                    for (u8 i = 0; i < player_number; i++) {
+                        save_score(player_name[i], treasure_found[i], monster_killed[i],
+                                   // add the win to the player who won
+                                   (i == turn_number) ? 1 : 0);
+                    }
                     u32 answer;
                     printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
                     do {
@@ -141,10 +143,6 @@ int main(int argc, char const *argv[]) {
                                         player_class, player_name, &turn, &is_winner);
                         // launch the new game
                         new_game(&player_number, player_name, player_class);
-                        // save the score of each player
-                        for (u8 hihi = 0; hihi < player_number; hihi++) {
-                            save_score(player_name[hihi], 0, 0, 0);
-                        }
                         actual_menu = MENU_GAME;
                         game_running = true;
                     }
@@ -186,8 +184,7 @@ int main(int argc, char const *argv[]) {
                                 &artifact_found[turn_number]);
                 } else {
                     will_teleport[turn_number] = false;
-                    player_teleport(map, &turn, &player_x[turn_number],
-                                    &player_y[turn_number]);
+                    player_teleport(map, &player_x[turn_number], &player_y[turn_number]);
                 }
 
                 // logic after the move
