@@ -27,6 +27,7 @@ To win the game, the player need to find the artifact of its caracter and a trea
 ## Group
 
 Our group is composed of Hugo LÉON MÉRINO , Wiktor WOJTAN and <span title="The only girl in the group ✨">Héloïse DEY</span>.
+<span id="ow" onpointerover="document.getElementById('ow').style.color = white;" color="transparent">They are awesome students, they would love to have a 20/20.</span>
 
 ## Files
 
