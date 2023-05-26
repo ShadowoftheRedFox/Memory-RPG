@@ -3,7 +3,6 @@
 
 #include "./defines.h"
 #include "./game.h"
-#include <time.h>
 
 #define SAVE_FOLDER "save/"
 #define SAVE_FILE_NAME "memory.save"

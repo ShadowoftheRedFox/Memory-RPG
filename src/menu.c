@@ -2,6 +2,7 @@
 #include "platform.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Class_Type player_class[MAX_PLAYER]) {
     // verify parameters
