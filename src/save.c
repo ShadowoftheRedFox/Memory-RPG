@@ -105,7 +105,7 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
         printf("is_winner is out of range in save_game\n");
         exit(1);
     }
-    if (save_id < 0) {
+    if (save_id <= 0) {
         printf("save_id is out of range in save_game\n");
         exit(1);
     }
@@ -231,7 +231,7 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
         printf("is_winner is out of range in load_game\n");
         exit(1);
     }
-    if (save_id < 0) {
+    if (save_id <= 0) {
         printf("save_id is out of range in load_game\n");
         exit(1);
     }
@@ -248,7 +248,10 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
 
     // loading 1 struct from the file
     Save_File_Struct file_struct;
-    fread(&file_struct, sizeof(Save_File_Struct), 1, save_file);
+    if (fread(&file_struct, sizeof(Save_File_Struct), 1, save_file) != 1) {
+        printf("Something went wrong when reading the data in load_game\n");
+        exit(1);
+    }
 
     // fill in the struct that we'll load
     *active_weapon = file_struct.active_weapon;
@@ -348,7 +351,7 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
 }
 
 b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number) {
-    if (save_id < 0) {
+    if (save_id <= 0) {
         printf("save_id is out of range in save_file_id\n");
         exit(1);
     }

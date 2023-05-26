@@ -8,9 +8,6 @@ int main(int argc, char const *argv[]) {
     platform_srand();
     platform_console_clear();
 
-    load_menu();
-    return 0;
-
     // create the map
     Board_Case **map = map_create();
 
@@ -74,13 +71,9 @@ int main(int argc, char const *argv[]) {
             platform_console_clear();
             switch (menu_choice) {
             case 1: // load actual game
-                // check if there is a save
-                // TODO load menu where we will choose a save_id to load
-                if (!save_file_exists(SAVE_FOLDER SAVE_FILE_NAME)) {
-                    animate_printf("There is no game to resume.\n");
-                    platform_sleep(1000);
-                    actual_menu = MENU_MAIN;
-                } else {
+                // let the player choose it's save
+                save_id = load_menu();
+                if (save_id != 0) {
                     animate_printf("Loading your game...");
                     platform_sleep(750);
                     load_game(map, &player_number, treasure_found, monster_killed,
@@ -89,6 +82,8 @@ int main(int argc, char const *argv[]) {
                               player_name, &turn, &is_winner, save_id);
                     game_running = true;
                     actual_menu = MENU_GAME;
+                } else {
+                    actual_menu = MENU_MAIN;
                 }
                 break;
             case 2: // new game

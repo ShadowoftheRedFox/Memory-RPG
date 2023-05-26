@@ -333,7 +333,7 @@ time_t load_menu() {
     // exit if no number file found
     if (!save_file_exists(SAVE_FOLDER NUMBER_FILE_NAME)) {
         animate_printf("There is no game in progress, so there is no game to load.\n");
-        platform_sleep(750);
+        platform_sleep(2000);
         return 0;
     }
 
