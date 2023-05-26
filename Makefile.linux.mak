@@ -21,7 +21,7 @@ OBJ_STRIP=$(OBJ:$(SRC_DIR)/%=%)
 OBJ_IN_DIR=$(addprefix $(OBJ_DIR)/, $(OBJ_STRIP))
 
 # build everything
-all: savedir objdir buildir exec
+all: objdir savedir buildir exec
 
 # build the executable
 exec: $(OBJ_IN_DIR)
