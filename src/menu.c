@@ -44,7 +44,7 @@ void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGT
 
 void reset_variables(u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
                      u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
-                     u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
+                     u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon active_weapon[MAX_PLAYER], Class_Type player_class[MAX_PLAYER],
                      char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner) {
     // verify parameters, we don't check for out of range since we'll edit them here
     if (player_number == NULL) {
@@ -329,12 +329,12 @@ void animate_printf(const char *text) {
     }
 }
 
-time_t load_menu() {
+void load_menu(u32 *answer) {
     // exit if no number file found
     if (!save_file_exists(SAVE_FOLDER NUMBER_FILE_NAME)) {
         animate_printf("There is no game in progress, so there is no game to load.\n");
         platform_sleep(2000);
-        return 0;
+        return;
     }
 
     platform_console_clear();
@@ -381,21 +381,22 @@ time_t load_menu() {
 
     // go back to main menu
     if (choosen == 0) {
-        return 0;
+        return;
     }
 
-    // return the time_t choosen
-    return array[choosen - 1].save_id;
+    // passing by a variable because array is dynamicly allocated, so we need to free it
+    *answer = array[choosen - 1].save_id;
+    platform_free(array);
 }
 
-void print_time(time_t time_second) {
+void print_time(u32 time_second) {
     if (time_second < 0) {
         printf("time_second is out of range in print_time\n");
         exit(1);
     }
 
     // get the time struct from time.h with our given amount of seconds
-    struct tm tm = *gmtime(&time_second);
+    struct tm tm = *gmtime((time_t *)(&time_second));
     // display the date
     char temp[40];
     sprintf(temp, "%02d-%02d-%4d at %02d:%02d:%02d\n",

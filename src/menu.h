@@ -51,7 +51,7 @@ void confirm();
 // animate the printf
 void animate_printf(const char *text);
 // pretty print a number of seconds into a yyyy-mm-dd hh:mm:ss format
-void print_time(time_t time_second);
-// display and choose a save to load, return 0 for back to menu, or a time_t value to load the wanted save
-time_t load_menu();
+void print_time(u32 time_second);
+// display and choose a save to load, return 0 for back to menu, or a u32 value to load the wanted save
+void load_menu(u32 *answer);
 #endif

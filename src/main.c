@@ -15,7 +15,6 @@ int main(int argc, char const *argv[]) {
     b8 game_running = true;
     b8 menu_running = true;
     Menu_Type actual_menu = MENU_MAIN;
-    u8 confirm = 0;
     i32 correct = 0;
     u8 turn_number = 0;
     u32 menu_choice = 0;
@@ -41,7 +40,7 @@ int main(int argc, char const *argv[]) {
     Case_Type turn = PLAYER_BLUE;
     b8 is_winner = false;
     // to know the unique number of the save
-    time_t save_id;
+    u32 save_id;
 
     // setup the coordinates for the start
     // player blue
@@ -72,14 +71,15 @@ int main(int argc, char const *argv[]) {
             switch (menu_choice) {
             case 1: // load actual game
                 // let the player choose it's save
-                save_id = load_menu();
+                load_menu(&save_id);
                 if (save_id != 0) {
-                    animate_printf("Loading your game...");
-                    platform_sleep(750);
+                    animate_printf("Loading your game...\n");
+                    confirm();
                     load_game(map, &player_number, treasure_found, monster_killed,
                               round_number, treasure, will_teleport, artifact_found,
                               player_x, player_y, &active_weapon, player_class,
-                              player_name, &turn, &is_winner, save_id);
+                              player_name, &turn, &is_winner, (u32)save_id);
+                    platform_sleep(750);
                     game_running = true;
                     actual_menu = MENU_GAME;
                 } else {
@@ -94,8 +94,8 @@ int main(int argc, char const *argv[]) {
                                 player_name, &turn, &is_winner);
                 // launch the new game
                 new_game(&player_number, player_name, player_class);
-                // get the current time in second
-                save_id = time(NULL);
+                // get a random number for the save
+                save_id = rand() % 1000000;
                 // save the score of each player
                 for (u8 hihi = 0; hihi < player_number; hihi++) {
                     save_score(player_name[hihi], 0, 0, 0);
@@ -158,8 +158,8 @@ int main(int argc, char const *argv[]) {
                                         player_class, player_name, &turn, &is_winner);
                         // launch the new game
                         new_game(&player_number, player_name, player_class);
-                        // get the current time in second
-                        save_id = time(NULL);
+                        // get a random number for the save
+                        save_id = rand() % 1000000;
                         actual_menu = MENU_GAME;
                         game_running = true;
                     }
@@ -211,6 +211,7 @@ int main(int argc, char const *argv[]) {
                            &will_teleport[turn_number], &player_x[turn_number],
                            &player_y[turn_number], &is_winner);
 
+                printf("using id: %d\n", save_id);
                 save_game(map, player_number, treasure_found, monster_killed,
                           round_number, treasure, will_teleport, artifact_found,
                           player_x, player_y, active_weapon, player_class, player_name,

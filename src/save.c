@@ -1,5 +1,6 @@
 #include "./save.h"
 #include "./game.h"
+#include "./menu.h"
 #include "./platform.h"
 #include <string.h>
 
@@ -29,12 +30,12 @@ and when he has been created
 !It's a pain to look what files there is into a folder, so save the number in a number.save or something
 */
 
-void get_save_name(char *path, time_t save_id) {
-    sprintf(path, SAVE_FOLDER "memory%llu.save", save_id);
+void get_save_name(char *path, u32 save_id) {
+    sprintf(path, SAVE_FOLDER "memory%06d.save", save_id);
 }
 
 // delete the save file after the party has ended
-b8 remove_save(time_t save_id) {
+b8 remove_save(u32 save_id) {
     char temp[100];
     get_save_name(temp, save_id);
     return remove(temp);
@@ -43,7 +44,7 @@ b8 remove_save(time_t save_id) {
 b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
              u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
              u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon active_weapon, Class_Type player_class[MAX_PLAYER],
-             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type turn, b8 is_winner, time_t save_id) {
+             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type turn, b8 is_winner, u32 save_id) {
     // verify parameters
     if (map == NULL) {
         printf("Map is null on save_game\n");
@@ -125,6 +126,7 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
         // failed to save the save id
         printf("Failed to save the save id in save_game\n");
         fclose(save_file);
+        remove_save(save_id);
         return false;
     }
 
@@ -168,7 +170,7 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
 b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
              u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
              u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
-             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner, time_t save_id) {
+             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner, u32 save_id) {
     // verify parameters
     // we are gonna edit all those value, we just need to check if thet are not null
     if (map == NULL) {
@@ -350,7 +352,7 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
     return true;
 }
 
-b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number) {
+b8 save_file_id(u32 save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number) {
     if (save_id <= 0) {
         printf("save_id is out of range in save_file_id\n");
         exit(1);
@@ -403,7 +405,7 @@ b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]
     fseek(file, (long)(sizeof(Save_Number)) * count, SEEK_SET);
     // check if successful
     if (fwrite(&file_struct, sizeof(Save_Number), 1, file) != 1) {
-        printf("failed to update data, %llu\n", save_id);
+        printf("failed to update data, %06d\n", save_id);
         fclose(file);
         return false;
     }
