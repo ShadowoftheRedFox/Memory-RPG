@@ -406,7 +406,7 @@ void load_menu(u32 *answer) {
     }
 
     // passing by a variable because array is dynamicly allocated, so we need to free it
-    *answer = array[choosen - 1].save_id;
+    *answer = array[choosen - 1 + skipped].save_id;
     platform_free(array);
 }
 

@@ -41,16 +41,15 @@ savedir:
 
 # delete bin then obj directory, with all files in it
 clean: 
-	if [ -d "$(BUILD_DIR)" ]; then
-	rm -r $(BUILD_DIR)
+	if [ -d "$(BUILD_DIR)" ]; then\
+		rm -r $(BUILD_DIR); \
 	fi
-	if [ -d "$(OBJ_DIR)" ]; then
-	rm -r $(OBJ_DIR)
+	if [ -d "$(OBJ_DIR)" ]; then\
+		rm -r $(OBJ_DIR); \
 	fi
-	if [ -d "$(SAVE_DIR)" ]; then
-	rm -r $(SAVE_DIR)
+	if [ -d "$(SAVE_DIR)" ]; then\
+		rm -r $(SAVE_DIR); \
 	fi
-
 # build o files
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(OBJ_DIR) objdir # compile .c to .o object
 	$(CC) -c $< -o $@

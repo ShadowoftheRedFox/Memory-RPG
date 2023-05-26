@@ -62,7 +62,7 @@ Once it is done, head to the [bin folder](./bin/) and you will find the game exe
 # Bugs
 
 Here is a list of known bugs:
-- On Linux: The first run of [build.linux.bat](./build.linux.sh) may run into an error. Re running it does what the file is intended to do.
+*Oh! No bugs known!*
 
 We use a dynamic array for loading saves and scores. There is no limitation about their sizes. So if there are too many saves files, it can take quite a lot of RAM.
 

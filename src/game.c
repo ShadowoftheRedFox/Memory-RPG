@@ -983,6 +983,7 @@ void game_win(Case_Type turn, char player_name[PLAYER_NAME_LENGTH],
     char temp[100];
     sprintf(temp, "Well done %s! You won after %d rounds!\n", player_name, round_number);
     animate_printf(temp);
+    platform_sleep(2000);
 }
 
 void game_choose_weapon(Choosen_Weapon *weapon) {

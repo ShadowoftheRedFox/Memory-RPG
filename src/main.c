@@ -27,7 +27,6 @@ int main(int argc, char const *argv[]) {
 
     // for the current round
     u32 round_number[MAX_PLAYER] = {0, 0, 0, 0};
-    u32 treasure[MAX_PLAYER] = {0, 0, 0, 0};
     b8 will_teleport[MAX_PLAYER] = {false, false, false, false};
     b8 artifact_found[MAX_PLAYER] = {false, false, false, false};
     u32 player_x[MAX_PLAYER] = {0, 0, 0, 0};
@@ -76,7 +75,7 @@ int main(int argc, char const *argv[]) {
                     animate_printf("Loading your game...\n");
                     confirm();
                     load_game(map, &player_number, treasure_found, monster_killed,
-                              round_number, treasure, will_teleport, artifact_found,
+                              round_number, treasure_found, will_teleport, artifact_found,
                               player_x, player_y, &active_weapon, player_class,
                               player_name, &turn, &is_winner, (u32)save_id);
                     platform_sleep(750);
@@ -89,7 +88,7 @@ int main(int argc, char const *argv[]) {
             case 2: // new game
                 map_setup(map);
                 reset_variables(&player_number, treasure_found, monster_killed,
-                                round_number, treasure, will_teleport, artifact_found,
+                                round_number, treasure_found, will_teleport, artifact_found,
                                 player_x, player_y, &active_weapon, player_class,
                                 player_name, &turn, &is_winner);
                 // launch the new game
@@ -123,19 +122,22 @@ int main(int argc, char const *argv[]) {
                 round_number[turn_number]++;
 
                 if (is_winner) {
-                    // display win message
-                    game_win(turn, player_name[turn_number], round_number[turn_number]);
-                    // remove the game save since it has ended
-                    remove_save(save_id);
-                    // remove the save number from the save list
-                    remove_save_id(save_id);
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
                         save_score(player_name[i], treasure_found[i], monster_killed[i],
                                    // add the win to the player who won
                                    (i == turn_number) ? 1 : 0);
                     }
-
+                    // display win message
+                    game_win(turn, player_name[turn_number], round_number[turn_number]);
+                    // remove the game save since it has ended
+                    remove_save(save_id);
+                    // remove the save number from the save list
+                    remove_save_id(save_id);
+                    reset_variables(&player_number, treasure_found, monster_killed,
+                                    round_number, treasure_found, will_teleport,
+                                    artifact_found, player_x, player_y, &active_weapon,
+                                    player_class, player_name, &turn, &is_winner);
                     platform_console_clear();
                     animate_printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
                     do {
@@ -154,10 +156,6 @@ int main(int argc, char const *argv[]) {
                         animate_printf("Readying up to make a new game...\n");
                         platform_sleep(750);
                         map_setup(map);
-                        reset_variables(&player_number, treasure_found, monster_killed,
-                                        round_number, treasure, will_teleport,
-                                        artifact_found, player_x, player_y, &active_weapon,
-                                        player_class, player_name, &turn, &is_winner);
                         // launch the new game
                         new_game(&player_number, player_name, player_class);
                         // get a random number for the save
@@ -199,7 +197,7 @@ int main(int argc, char const *argv[]) {
                 // await player move
                 if (!will_teleport[turn_number]) {
                     player_move(map, &turn, player_number, &player_x[turn_number],
-                                &player_y[turn_number], &treasure[turn_number],
+                                &player_y[turn_number], &treasure_found[turn_number],
                                 &artifact_found[turn_number]);
                 } else {
                     will_teleport[turn_number] = false;
@@ -207,14 +205,14 @@ int main(int argc, char const *argv[]) {
                 }
 
                 // logic after the move
-                game_logic(map, &turn, &treasure[turn_number],
+                game_logic(map, &turn, &treasure_found[turn_number],
                            &monster_killed[turn_number], &artifact_found[turn_number],
                            player_class[turn_number], active_weapon, player_number,
                            &will_teleport[turn_number], &player_x[turn_number],
                            &player_y[turn_number], &is_winner);
 
                 save_game(map, player_number, treasure_found, monster_killed,
-                          round_number, treasure, will_teleport, artifact_found,
+                          round_number, treasure_found, will_teleport, artifact_found,
                           player_x, player_y, active_weapon, player_class, player_name,
                           turn, is_winner, save_id);
             }

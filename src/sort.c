@@ -195,14 +195,6 @@ void quickSort(Save_Player_Score array[], i32 low, i32 high, Sort_Type type) {
         printf("array is null in quickSort\n");
         exit(1);
     }
-    if (low < 0) {
-        printf("low is out of range in quickSort\n");
-        exit(1);
-    }
-    if (high < 0) {
-        printf("high is out of range in quickSort\n");
-        exit(1);
-    }
     if (type < 0 || type >= SORT_UNKNOWN) {
         printf("type is out of range in quickSort\n");
         exit(1);
