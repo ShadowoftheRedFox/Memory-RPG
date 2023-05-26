@@ -162,6 +162,7 @@ void score_menu() {
         do {
             printf(">> ");
             correct = scanf("%d", &menu);
+            empty_stdin_buffer();
         } while (menu < 1 || menu > 5 || correct != 1);
 
         // display wanted menu
@@ -326,4 +327,79 @@ void animate_printf(const char *text) {
         platform_sleep(ANIMATION_SPEED);
         i++;
     }
+}
+
+time_t load_menu() {
+    // exit if no number file found
+    if (!save_file_exists(SAVE_FOLDER NUMBER_FILE_NAME)) {
+        animate_printf("There is no game in progress, so there is no game to load.\n");
+        platform_sleep(750);
+        return 0;
+    }
+
+    platform_console_clear();
+
+    i32 correct = 0;
+    u32 choosen = 0;
+
+    // get our current available save
+    Save_Number *array = NULL;
+    u32 array_size = 0;
+    get_save_id_array(&array, &array_size);
+
+    // verify returns of this function
+    if (array == NULL) {
+        printf("get_save_id_array returned null array\n");
+        exit(1);
+    }
+    if (array_size <= 0) {
+        printf("get_save_id_array returned out of range array_size\n");
+        exit(1);
+    }
+
+    // pretty print all available save to load
+    printf("There are currently %d games that are not finished:\n", array_size);
+    for (u32 i = 0; i < array_size; i++) {
+        printf("%d: Game with ", i + 1);
+        // display the name of each player in this save
+        for (u8 p = 0; p < array[i].player_number; p++) {
+            animate_printf(array[i].player_name[p]);
+            animate_printf(", ");
+        }
+        printf("started the ");
+        // display the date
+        print_time(array[i].save_id);
+    }
+
+    printf("\nWhich one do you want to load? Press 0 to go back to the main menu.\n");
+
+    do {
+        printf(">> ");
+        correct = scanf("%d", &choosen);
+        empty_stdin_buffer();
+    } while (choosen < 0 || choosen > array_size || correct != 1);
+
+    // go back to main menu
+    if (choosen == 0) {
+        return 0;
+    }
+
+    // return the time_t choosen
+    return array[choosen - 1].save_id;
+}
+
+void print_time(time_t time_second) {
+    if (time_second < 0) {
+        printf("time_second is out of range in print_time\n");
+        exit(1);
+    }
+
+    // get the time struct from time.h with our given amount of seconds
+    struct tm tm = *gmtime(&time_second);
+    // display the date
+    char temp[40];
+    sprintf(temp, "%02d-%02d-%4d at %02d:%02d:%02d\n",
+            tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+            tm.tm_hour + UTC_OFFSET, tm.tm_min, tm.tm_sec);
+    animate_printf(temp);
 }

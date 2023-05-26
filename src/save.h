@@ -40,6 +40,7 @@ typedef struct Save_Player_Score {
 typedef struct Save_Number {
     time_t save_id;
     char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH];
+    u32 player_number;
 } Save_Number;
 
 // remove the save file
@@ -61,5 +62,7 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
 // quick function to get the save name depending of teh provided id
 void get_save_name(char *path, time_t save_id);
 // save the number of the save with the player  playing in it
-b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]);
+b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number);
+// get all save_number struct in the number save file
+void get_save_id_array(Save_Number **dest_array, u32 *dest_size);
 #endif

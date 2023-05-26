@@ -35,7 +35,7 @@ void get_save_name(char *path, time_t save_id) {
 
 // delete the save file after the party has ended
 b8 remove_save(time_t save_id) {
-    char *temp;
+    char temp[100];
     get_save_name(temp, save_id);
     return remove(temp);
 }
@@ -121,7 +121,7 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
     }
 
     // save the save_id
-    if (!save_file_id(save_id, player_name)) {
+    if (!save_file_id(save_id, player_name, player_number)) {
         // failed to save the save id
         printf("Failed to save the save id in save_game\n");
         fclose(save_file);
@@ -237,9 +237,8 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
     }
 
     //  create the file handle
-    char *save_name;
+    char save_name[100];
     get_save_name(save_name, save_id);
-    printf("Save name: %s", save_name); // TEST
     FILE *save_file = fopen(save_name, "rb");
     if (save_file == NULL) {
         printf("Failed to get the save file in load_game.\n");
@@ -348,9 +347,17 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
     return true;
 }
 
-b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]) {
+b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number) {
     if (save_id < 0) {
         printf("save_id is out of range in save_file_id\n");
+        exit(1);
+    }
+    if (player_name == NULL) {
+        printf("player_name is null in save_file_id\n");
+        exit(1);
+    }
+    if (player_number <= 0) {
+        printf("player_number is out of range in save_file_id\n");
         exit(1);
     }
 
@@ -371,6 +378,7 @@ b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]
 
     // fill our struct
     file_struct.save_id = save_id;
+    file_struct.player_number = player_number;
     for (u8 i = 0; i < MAX_PLAYER; i++) {
         strcpy(file_struct.player_name[i], player_name[i]);
     }
@@ -400,4 +408,81 @@ b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]
     // close the stream
     fclose(file);
     return true;
+}
+
+u32 add_alloc_id(Save_Number **array, u32 index_target, u32 current_size, Save_Number *new_element) {
+    // verify parameters
+    if (array == NULL) {
+        printf("array is null in add_alloc_id\n");
+        exit(1);
+    }
+    if (new_element == NULL) {
+        printf("new_element is null in add_alloc_id\n");
+        exit(1);
+    }
+    if (index_target < 0) {
+        printf("index_target is out of range in add_alloc_id\n");
+        exit(1);
+    }
+    if (current_size < 0) {
+        printf("current_size is out of range in add_alloc_id\n");
+        exit(1);
+    }
+
+    if (index_target >= current_size) {
+        // we want to write in array[index_target], so it size must be at least current_size + 1
+        current_size = index_target + 1;
+        // re alloc memory
+        Save_Number *new_array = realloc(*array, current_size * sizeof(Save_Number));
+
+        // failed to re alloc memory
+        if (new_array == NULL) {
+            return false;
+        }
+
+        // exchange new address value with the old one
+        *array = new_array;
+    }
+
+    // update the memory
+    (*array)[index_target] = *new_element;
+    // return the new size
+    return current_size;
+}
+
+void get_save_id_array(Save_Number **dest_array, u32 *dest_size) {
+    // verify parameters
+    if (dest_array == NULL) {
+        printf("dest_array is out of range in get_save_id_save\n");
+        exit(1);
+    }
+    if (dest_size == NULL) {
+        printf("dest_size is out of range in get_save_id_save\n");
+        exit(1);
+    }
+
+    // size of our array
+    u32 array_size = 0;
+    // number of save struct found
+    u32 struct_found = 0;
+    // our array
+    Save_Number *array = platform_allocate(sizeof(Save_Number) * array_size);
+    // temporrary element, we'll stock information we read in it
+    Save_Number temp;
+
+    FILE *file = fopen(SAVE_FOLDER NUMBER_FILE_NAME, "rb");
+    if (file == NULL) {
+        printf("Failed to get the save file in get_save_id_save.\n");
+        exit(1);
+    }
+
+    // get each struct and save it in the array
+    while (fread(&temp, sizeof(temp), 1, file) == 1) {
+        array_size = add_alloc_id(&array, struct_found, array_size, &temp);
+        struct_found++;
+    }
+
+    // we replace the array provided and it's length by ours
+    *dest_array = array;
+    *dest_size = array_size;
 }

@@ -8,6 +8,9 @@ int main(int argc, char const *argv[]) {
     platform_srand();
     platform_console_clear();
 
+    load_menu();
+    return 0;
+
     // create the map
     Board_Case **map = map_create();
 
@@ -66,6 +69,7 @@ int main(int argc, char const *argv[]) {
             do {
                 printf(">> ");
                 correct = scanf("%d", &menu_choice);
+                empty_stdin_buffer();
             } while (menu_choice < 1 || menu_choice > 4 || correct != 1);
             platform_console_clear();
             switch (menu_choice) {
