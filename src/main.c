@@ -127,6 +127,8 @@ int main(int argc, char const *argv[]) {
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
                     // remove the game save since it has ended
                     remove_save(save_id);
+                    // remove the save number from the save list
+                    remove_save_id(save_id);
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
                         save_score(player_name[i], treasure_found[i], monster_killed[i],
@@ -211,7 +213,6 @@ int main(int argc, char const *argv[]) {
                            &will_teleport[turn_number], &player_x[turn_number],
                            &player_y[turn_number], &is_winner);
 
-                printf("using id: %d\n", save_id);
                 save_game(map, player_number, treasure_found, monster_killed,
                           round_number, treasure, will_teleport, artifact_found,
                           player_x, player_y, active_weapon, player_class, player_name,

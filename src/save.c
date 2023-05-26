@@ -384,6 +384,9 @@ b8 save_file_id(u32 save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u
     // fill our struct
     file_struct.save_id = save_id;
     file_struct.player_number = player_number;
+    file_struct.date = time(NULL);
+    // to know if the associated game save has been deleted or not
+    file_struct.deleted = false;
     for (u8 i = 0; i < MAX_PLAYER; i++) {
         strcpy(file_struct.player_name[i], player_name[i]);
     }
@@ -394,6 +397,28 @@ b8 save_file_id(u32 save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u
         // check if the name is the same
         if (temp.save_id == save_id) {
             // we already saved the file, quit
+            fclose(file);
+            return true;
+        }
+        // follow the structure position
+        count++;
+    }
+
+    // go back at the beginning of the file
+    fseek(file, 0, SEEK_SET);
+    count = 0;
+    // replace any deleted struct by our new
+    while (fread(&temp, sizeof(Save_Number), 1, file) == 1) {
+        // check if the name is the same
+        if (temp.deleted == true) {
+            // write the new data at the position of the wanted structure
+            fseek(file, (long)(sizeof(Save_Number)) * count, SEEK_SET);
+            // check if successful
+            if (fwrite(&file_struct, sizeof(Save_Number), 1, file) != 1) {
+                printf("failed to update data, %06d\n", save_id);
+                fclose(file);
+                return false;
+            }
             fclose(file);
             return true;
         }
@@ -490,4 +515,46 @@ void get_save_id_array(Save_Number **dest_array, u32 *dest_size) {
     // we replace the array provided and it's length by ours
     *dest_array = array;
     *dest_size = array_size;
+}
+
+void remove_save_id(u32 save_id) {
+    if (save_id <= 0) {
+        printf("save_id is out of range in remove_save_id\n");
+        exit(1);
+    }
+
+    Save_Number temp;
+    u32 count = 0;
+
+    //  create the file handle
+    FILE *file = fopen(SAVE_FOLDER NUMBER_FILE_NAME, "rb+");
+    if (file == NULL) {
+        printf("Failed to get the save file in remove_save_id\n");
+        // failed to edit
+        return;
+    }
+
+    // move the cursor as we read
+    // while == 1 because we want 1 item successfully read
+    while (fread(&temp, sizeof(Save_Number), 1, file) == 1) {
+        // check if the name is the same
+        if (temp.save_id == save_id) {
+            // we found our struct, set the flag and quit
+            temp.deleted = true;
+            fseek(file, (long)(sizeof(Save_Number)) * count, SEEK_SET);
+            // check if successful
+            if (fwrite(&temp, sizeof(Save_Number), 1, file) != 1) {
+                printf("failed to set flag data, %06d\n", save_id);
+            }
+            fclose(file);
+            return;
+        }
+        // follow the structure position
+        count++;
+    }
+
+    printf("failed to find data, %06d\n", save_id);
+
+    // close the stream
+    fclose(file);
 }

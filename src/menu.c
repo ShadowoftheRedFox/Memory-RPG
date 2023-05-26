@@ -2,7 +2,6 @@
 #include "platform.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 void new_game(u32 *player_number, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Class_Type player_class[MAX_PLAYER]) {
     // verify parameters
@@ -147,7 +146,7 @@ void score_menu() {
     // exit if no score file found
     if (!save_file_exists(SAVE_FOLDER SCORE_FILE_NAME)) {
         animate_printf("No one played the game yet. There is no score to display.\n");
-        platform_sleep(750);
+        platform_sleep(2000);
         return;
     }
 
@@ -165,6 +164,8 @@ void score_menu() {
             correct = scanf("%d", &menu);
             empty_stdin_buffer();
         } while (menu < 1 || menu > 5 || correct != 1);
+
+        platform_console_clear();
 
         // display wanted menu
         switch (menu) {
@@ -269,25 +270,25 @@ void show_score(Sort_Type type) {
     switch (type) {
     case SORT_KILL:
         for (u32 i = 0; i < struct_found; i++) {
-            printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].monster_killed);
+            printf("%d: %-30s %d\n", i + 1, array[i].player_name, array[i].monster_killed);
         }
         confirm();
         break;
     case SORT_WIN:
         for (u32 i = 0; i < struct_found; i++) {
-            printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].game_won);
+            printf("%d: %-30s %d\n", i + 1, array[i].player_name, array[i].game_won);
         }
         confirm();
         break;
     case SORT_TREASURE:
         for (u32 i = 0; i < struct_found; i++) {
-            printf("%d: %s:\t%d\n", i + 1, array[i].player_name, array[i].treasure_found);
+            printf("%d: %-30s %d\n", i + 1, array[i].player_name, array[i].treasure_found);
         }
         confirm();
         break;
     case SORT_TOP:
         for (u32 i = 0; i < struct_found; i++) {
-            printf("%d: %s:\t%d\n", i + 1, array[i].player_name,
+            printf("%d: %-30s %d\n", i + 1, array[i].player_name,
                    array[i].game_won * SCORE_WIN + array[i].monster_killed * SCORE_KILL + array[i].treasure_found * SCORE_TREASURE);
         }
         confirm();
@@ -335,6 +336,7 @@ void load_menu(u32 *answer) {
     if (!save_file_exists(SAVE_FOLDER NUMBER_FILE_NAME)) {
         animate_printf("There is no game in progress, so there is no game to load.\n");
         platform_sleep(2000);
+        *answer = 0;
         return;
     }
 
@@ -342,6 +344,9 @@ void load_menu(u32 *answer) {
 
     i32 correct = 0;
     u32 choosen = 0;
+    char temp[100];
+    // to skip deleted structs
+    u32 skipped = 0;
 
     // get our current available save
     Save_Number *array = NULL;
@@ -358,21 +363,35 @@ void load_menu(u32 *answer) {
         exit(1);
     }
 
-    // pretty print all available save to load
-    printf("There are currently %d games that are not finished:\n", array_size);
+    // pre count structs amount
     for (u32 i = 0; i < array_size; i++) {
-        printf("%d: Game with ", i + 1);
-        // display the name of each player in this save
-        for (u8 p = 0; p < array[i].player_number; p++) {
-            animate_printf(array[i].player_name[p]);
-            animate_printf(", ");
+        if (array[i].deleted == true) {
+            skipped++;
         }
-        printf("started the ");
-        // display the date
-        print_time(array[i].save_id);
     }
 
-    printf("\nWhich one do you want to load? Press 0 to go back to the main menu.\n");
+    // pretty print all available save to load
+    sprintf(temp, "There are currently %d games that are not finished:\n", array_size - skipped);
+    animate_printf(temp);
+    skipped = 0;
+    for (u32 i = 0; i < array_size; i++) {
+        if (array[i].deleted == false) {
+            sprintf(temp, "%d: Game with ", i + 1 - skipped);
+            animate_printf(temp);
+            // display the name of each player in this save
+            for (u8 p = 0; p < array[i].player_number; p++) {
+                animate_printf(array[i].player_name[p]);
+                animate_printf(", ");
+            }
+            animate_printf("started the ");
+            // display the date
+            print_time(array[i].date);
+        } else {
+            skipped++;
+        }
+    }
+
+    animate_printf("\nWhich one do you want to load? Press 0 to go back to the main menu.\n");
 
     do {
         printf(">> ");
@@ -382,6 +401,7 @@ void load_menu(u32 *answer) {
 
     // go back to main menu
     if (choosen == 0) {
+        *answer = 0;
         return;
     }
 
@@ -390,14 +410,14 @@ void load_menu(u32 *answer) {
     platform_free(array);
 }
 
-void print_time(u32 time_second) {
+void print_time(time_t time_second) {
     if (time_second < 0) {
         printf("time_second is out of range in print_time\n");
         exit(1);
     }
 
     // get the time struct from time.h with our given amount of seconds
-    struct tm tm = *gmtime((time_t *)(&time_second));
+    struct tm tm = *gmtime(&time_second);
     // display the date
     char temp[40];
     sprintf(temp, "%02d-%02d-%4d at %02d:%02d:%02d\n",

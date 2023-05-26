@@ -3,6 +3,7 @@
 
 #include "./defines.h"
 #include "./game.h"
+#include <time.h>
 
 #define SAVE_FOLDER "save/"
 #define SAVE_FILE_NAME "memory.save"
@@ -42,6 +43,8 @@ typedef struct Save_Number {
     u32 save_id;
     char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH];
     u32 player_number;
+    time_t date;
+    b8 deleted;
 } Save_Number;
 
 // remove the save file
@@ -66,4 +69,6 @@ void get_save_name(char *path, u32 save_id);
 b8 save_file_id(u32 save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], u32 player_number);
 // get all save_number struct in the number save file
 void get_save_id_array(Save_Number **dest_array, u32 *dest_size);
+// set the struct as deleted
+void remove_save_id(u32 save_id);
 #endif
