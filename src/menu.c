@@ -162,6 +162,7 @@ void score_menu() {
         do {
             printf(">> ");
             correct = scanf("%d", &menu);
+            empty_stdin_buffer();
         } while (menu < 1 || menu > 5 || correct != 1);
 
         // display wanted menu

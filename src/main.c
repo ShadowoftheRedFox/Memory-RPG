@@ -64,6 +64,7 @@ int main(int argc, char const *argv[]) {
             do {
                 printf(">> ");
                 correct = scanf("%d", &menu_choice);
+                empty_stdin_buffer();
             } while (menu_choice < 1 || menu_choice > 4 || correct != 1);
             platform_console_clear();
             switch (menu_choice) {
