@@ -15,7 +15,6 @@ int main(int argc, char const *argv[]) {
     b8 game_running = true;
     b8 menu_running = true;
     Menu_Type actual_menu = MENU_MAIN;
-    u8 confirm = 0;
     i32 correct = 0;
     u8 turn_number = 0;
     u32 menu_choice = 0;
@@ -40,6 +39,8 @@ int main(int argc, char const *argv[]) {
     char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH];
     Case_Type turn = PLAYER_BLUE;
     b8 is_winner = false;
+    // to know the unique number of the save
+    u32 save_id;
 
     // setup the coordinates for the start
     // player blue
@@ -69,20 +70,20 @@ int main(int argc, char const *argv[]) {
             platform_console_clear();
             switch (menu_choice) {
             case 1: // load actual game
-                // check if there is a save
-                if (!save_file_exists(SAVE_FOLDER SAVE_FILE_NAME)) {
-                    animate_printf("There is no game to resume.\n");
-                    platform_sleep(1000);
-                    actual_menu = MENU_MAIN;
-                } else {
-                    animate_printf("Loading your game...");
-                    platform_sleep(750);
+                // let the player choose it's save
+                load_menu(&save_id);
+                if (save_id != 0) {
+                    animate_printf("Loading your game...\n");
+                    confirm();
                     load_game(map, &player_number, treasure_found, monster_killed,
                               round_number, treasure, will_teleport, artifact_found,
                               player_x, player_y, &active_weapon, player_class,
-                              player_name, &turn, &is_winner);
+                              player_name, &turn, &is_winner, (u32)save_id);
+                    platform_sleep(750);
                     game_running = true;
                     actual_menu = MENU_GAME;
+                } else {
+                    actual_menu = MENU_MAIN;
                 }
                 break;
             case 2: // new game
@@ -93,6 +94,8 @@ int main(int argc, char const *argv[]) {
                                 player_name, &turn, &is_winner);
                 // launch the new game
                 new_game(&player_number, player_name, player_class);
+                // get a random number for the save
+                save_id = rand() % 1000000;
                 // save the score of each player
                 for (u8 hihi = 0; hihi < player_number; hihi++) {
                     save_score(player_name[hihi], 0, 0, 0);
@@ -123,7 +126,7 @@ int main(int argc, char const *argv[]) {
                     // display win message
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
                     // remove the game save since it has ended
-                    remove_save();
+                    remove_save(save_id);
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
                         save_score(player_name[i], treasure_found[i], monster_killed[i],
@@ -155,6 +158,8 @@ int main(int argc, char const *argv[]) {
                                         player_class, player_name, &turn, &is_winner);
                         // launch the new game
                         new_game(&player_number, player_name, player_class);
+                        // get a random number for the save
+                        save_id = rand() % 1000000;
                         actual_menu = MENU_GAME;
                         game_running = true;
                     }
@@ -206,10 +211,11 @@ int main(int argc, char const *argv[]) {
                            &will_teleport[turn_number], &player_x[turn_number],
                            &player_y[turn_number], &is_winner);
 
+                printf("using id: %d\n", save_id);
                 save_game(map, player_number, treasure_found, monster_killed,
                           round_number, treasure, will_teleport, artifact_found,
                           player_x, player_y, active_weapon, player_class, player_name,
-                          turn, is_winner);
+                          turn, is_winner, save_id);
             }
         }
     }
