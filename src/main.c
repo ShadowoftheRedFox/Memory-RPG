@@ -2,7 +2,6 @@
 #include "./menu.h"
 #include "./platform.h"
 #include "./save.h"
-#include <time.h>
 
 int main(int argc, char const *argv[]) {
     // setup game rand
@@ -72,6 +71,7 @@ int main(int argc, char const *argv[]) {
             switch (menu_choice) {
             case 1: // load actual game
                 // check if there is a save
+                // TODO load menu where we will choose a save_id to load
                 if (!save_file_exists(SAVE_FOLDER SAVE_FILE_NAME)) {
                     animate_printf("There is no game to resume.\n");
                     platform_sleep(1000);
@@ -82,7 +82,7 @@ int main(int argc, char const *argv[]) {
                     load_game(map, &player_number, treasure_found, monster_killed,
                               round_number, treasure, will_teleport, artifact_found,
                               player_x, player_y, &active_weapon, player_class,
-                              player_name, &turn, &is_winner);
+                              player_name, &turn, &is_winner, save_id);
                     game_running = true;
                     actual_menu = MENU_GAME;
                 }
@@ -127,13 +127,14 @@ int main(int argc, char const *argv[]) {
                     // display win message
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
                     // remove the game save since it has ended
-                    remove_save();
+                    remove_save(save_id);
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
                         save_score(player_name[i], treasure_found[i], monster_killed[i],
                                    // add the win to the player who won
                                    (i == turn_number) ? 1 : 0);
                     }
+
                     platform_console_clear();
                     animate_printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
                     do {
@@ -214,7 +215,7 @@ int main(int argc, char const *argv[]) {
                 save_game(map, player_number, treasure_found, monster_killed,
                           round_number, treasure, will_teleport, artifact_found,
                           player_x, player_y, active_weapon, player_class, player_name,
-                          turn, is_winner);
+                          turn, is_winner, save_id);
             }
         }
     }

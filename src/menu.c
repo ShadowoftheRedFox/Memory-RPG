@@ -192,7 +192,7 @@ void score_menu() {
     }
 }
 
-b8 add_alloc(Save_Player_Score **array, u32 index_target, u32 current_size, Save_Player_Score *new_element) {
+u32 add_alloc(Save_Player_Score **array, u32 index_target, u32 current_size, Save_Player_Score *new_element) {
     // verify parameters
     if (array == NULL) {
         printf("array is null in add_alloc\n");

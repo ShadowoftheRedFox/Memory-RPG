@@ -29,15 +29,21 @@ and when he has been created
 !It's a pain to look what files there is into a folder, so save the number in a number.save or something
 */
 
+void get_save_name(char *path, time_t save_id) {
+    sprintf(path, SAVE_FOLDER "memory%llu.save", save_id);
+}
+
 // delete the save file after the party has ended
-b8 remove_save() {
-    return remove(SAVE_FOLDER SAVE_FILE_NAME);
+b8 remove_save(time_t save_id) {
+    char *temp;
+    get_save_name(temp, save_id);
+    return remove(temp);
 }
 
 b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
              u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
              u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon active_weapon, Class_Type player_class[MAX_PLAYER],
-             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type turn, b8 is_winner) {
+             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type turn, b8 is_winner, time_t save_id) {
     // verify parameters
     if (map == NULL) {
         printf("Map is null on save_game\n");
@@ -99,12 +105,26 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
         printf("is_winner is out of range in save_game\n");
         exit(1);
     }
+    if (save_id < 0) {
+        printf("save_id is out of range in save_game\n");
+        exit(1);
+    }
 
     //  create the file handle
-    FILE *save_file = fopen(SAVE_FOLDER SAVE_FILE_NAME, "wb");
+    char save_name[100];
+    get_save_name(save_name, save_id);
+    FILE *save_file = fopen(save_name, "wb");
     if (save_file == NULL) {
         printf("Failed to get the save file in save_game\n");
         // failed to save
+        return false;
+    }
+
+    // save the save_id
+    if (!save_file_id(save_id, player_name)) {
+        // failed to save the save id
+        printf("Failed to save the save id in save_game\n");
+        fclose(save_file);
         return false;
     }
 
@@ -148,7 +168,7 @@ b8 save_game(Board_Case **map, u32 player_number, u32 treasure_found[MAX_PLAYER]
 b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER], u32 monster_killed[MAX_PLAYER], u32 round_number[MAX_PLAYER],
              u32 treasure[MAX_PLAYER], b8 will_teleport[MAX_PLAYER], b8 artifact_found[MAX_PLAYER],
              u32 player_x[MAX_PLAYER], u32 player_y[MAX_PLAYER], Choosen_Weapon *active_weapon, Class_Type player_class[MAX_PLAYER],
-             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner) {
+             char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH], Case_Type *turn, b8 *is_winner, time_t save_id) {
     // verify parameters
     // we are gonna edit all those value, we just need to check if thet are not null
     if (map == NULL) {
@@ -211,9 +231,16 @@ b8 load_game(Board_Case **map, u32 *player_number, u32 treasure_found[MAX_PLAYER
         printf("is_winner is out of range in load_game\n");
         exit(1);
     }
+    if (save_id < 0) {
+        printf("save_id is out of range in load_game\n");
+        exit(1);
+    }
 
     //  create the file handle
-    FILE *save_file = fopen(SAVE_FOLDER SAVE_FILE_NAME, "rb");
+    char *save_name;
+    get_save_name(save_name, save_id);
+    printf("Save name: %s", save_name); // TEST
+    FILE *save_file = fopen(save_name, "rb");
     if (save_file == NULL) {
         printf("Failed to get the save file in load_game.\n");
         // failed to load
@@ -312,6 +339,60 @@ b8 save_score(char player_name[PLAYER_NAME_LENGTH], u32 treasure_found, u32 mons
     // check if successful
     if (fwrite(&file_struct, sizeof(Save_Player_Score), 1, file) != 1) {
         printf("failed to update data, %s\n", player_name);
+        fclose(file);
+        return false;
+    }
+
+    // close the stream
+    fclose(file);
+    return true;
+}
+
+b8 save_file_id(time_t save_id, char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH]) {
+    if (save_id < 0) {
+        printf("save_id is out of range in save_file_id\n");
+        exit(1);
+    }
+
+    Save_Number file_struct;
+    Save_Number temp;
+    u32 count = 0;
+
+    //  create the file handle
+    FILE *file = fopen(SAVE_FOLDER NUMBER_FILE_NAME, "rb+");
+    if (file == NULL) {
+        file = fopen(SAVE_FOLDER NUMBER_FILE_NAME, "wb+");
+    }
+    if (file == NULL) {
+        printf("Failed to get the save file in save_file_id\n");
+        // failed to save
+        return false;
+    }
+
+    // fill our struct
+    file_struct.save_id = save_id;
+    for (u8 i = 0; i < MAX_PLAYER; i++) {
+        strcpy(file_struct.player_name[i], player_name[i]);
+    }
+
+    // move the cursor as we read
+    // while == 1 because we want 1 item successfully read
+    while (fread(&temp, sizeof(Save_Number), 1, file) == 1) {
+        // check if the name is the same
+        if (temp.save_id == save_id) {
+            // we already saved the file, quit
+            fclose(file);
+            return true;
+        }
+        // follow the structure position
+        count++;
+    }
+
+    // write the new data at the position of the wanted structure
+    fseek(file, (long)(sizeof(Save_Number)) * count, SEEK_SET);
+    // check if successful
+    if (fwrite(&file_struct, sizeof(Save_Number), 1, file) != 1) {
+        printf("failed to update data, %llu\n", save_id);
         fclose(file);
         return false;
     }
