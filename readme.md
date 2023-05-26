@@ -71,7 +71,8 @@ The number generated for the save ID are random, between 0 and 1 000 000. With b
 ## Preview
 
 <!-- TODO ad a preview of the game -->
-<!-- ![Preview images](./preview.png) -->
+![Preview images](./images/Choose_weapon.png)
+![Preview images](./images/End.png)
 
 # CY Tech
 ![CY tech icon](./images/CY-Tech.png)
