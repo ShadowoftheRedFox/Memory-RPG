@@ -57,12 +57,16 @@ If you run [build.windows.bat](./build.windows.bat)/[build.linux.bat](./build.li
 
 You can also run the makefiles alone, but the shell scripts is easier to do so.
 
-Once it is done, head to the [bin folder](./bin/) and you will find the game executable.
+Once it is done, head to the [bin folder](./bin/) and you will find the game executable. Run it as it is.
 
 # Bugs
 
 Here is a list of known bugs:
 - On Linux: The first run of [build.linux.bat](./build.linux.sh) may run into an error. Re running it does what the file is intended to do.
+
+We use a dynamic array for loading saves and scores. There is no limitation about their sizes. So if there are too many saves files, it can take quite a lot of RAM.
+
+The number generated for the save ID are random, between 0 and 1 000 000. With bad luck, you can create the same number and override and old game.
 
 ## Preview
 
