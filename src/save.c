@@ -26,6 +26,7 @@ when deleting save, delete while searching the name -> add a delete save in menu
 when loading, ask for which save to load, by showing which player there are in each game and how many round has been played,
 and when he has been created
 ^If there is o bug after the test on linux
+!It's a pain to look what files there is into a folder, so save the number in a number.save or something
 */
 
 // delete the save file after the party has ended
