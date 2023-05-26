@@ -2,6 +2,7 @@
 #include "./menu.h"
 #include "./platform.h"
 #include "./save.h"
+#include <time.h>
 
 int main(int argc, char const *argv[]) {
     // setup game rand
@@ -19,6 +20,7 @@ int main(int argc, char const *argv[]) {
     i32 correct = 0;
     u8 turn_number = 0;
     u32 menu_choice = 0;
+    u32 answer = 0;
 
     // for counting the score
     u32 player_number = 0;
@@ -39,6 +41,8 @@ int main(int argc, char const *argv[]) {
     char player_name[MAX_PLAYER][PLAYER_NAME_LENGTH];
     Case_Type turn = PLAYER_BLUE;
     b8 is_winner = false;
+    // to know the unique number of the save
+    time_t save_id;
 
     // setup the coordinates for the start
     // player blue
@@ -91,6 +95,8 @@ int main(int argc, char const *argv[]) {
                                 player_name, &turn, &is_winner);
                 // launch the new game
                 new_game(&player_number, player_name, player_class);
+                // get the current time in second
+                save_id = time(NULL);
                 // save the score of each player
                 for (u8 hihi = 0; hihi < player_number; hihi++) {
                     save_score(player_name[hihi], 0, 0, 0);
@@ -118,6 +124,7 @@ int main(int argc, char const *argv[]) {
                 round_number[turn_number]++;
 
                 if (is_winner) {
+                    // display win message
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
@@ -125,7 +132,6 @@ int main(int argc, char const *argv[]) {
                                    // add the win to the player who won
                                    (i == turn_number) ? 1 : 0);
                     }
-                    u32 answer;
                     platform_console_clear();
                     animate_printf("Do you want to play a new game?\n1 - Yes\n2 - No\n");
                     do {
@@ -150,6 +156,8 @@ int main(int argc, char const *argv[]) {
                                         player_class, player_name, &turn, &is_winner);
                         // launch the new game
                         new_game(&player_number, player_name, player_class);
+                        // get the current time in second
+                        save_id = time(NULL);
                         actual_menu = MENU_GAME;
                         game_running = true;
                     }
