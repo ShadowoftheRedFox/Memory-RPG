@@ -126,6 +126,8 @@ int main(int argc, char const *argv[]) {
                 if (is_winner) {
                     // display win message
                     game_win(turn, player_name[turn_number], round_number[turn_number]);
+                    // remove the game save since it has ended
+                    remove_save();
                     // save the score of each player
                     for (u8 i = 0; i < player_number; i++) {
                         save_score(player_name[i], treasure_found[i], monster_killed[i],
