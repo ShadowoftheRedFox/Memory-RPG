@@ -262,7 +262,7 @@ void map_print(Board_Case **map) {
                         break;
                     case CASE_OBJECT_PORTAL:
                         platform_color_change(COLOR_PINK, COLOR_EMPTY);
-                        printf("⦿ ");
+                        printf("◌ ");
                         break;
                     case CASE_OBJECT_TOTEM:
                         platform_color_change(COLOR_PINK, COLOR_EMPTY);
@@ -296,11 +296,11 @@ void map_print(Board_Case **map) {
                         break;
                     case CASE_MONSTER_BASILIC:
                         platform_color_change(COLOR_RED, COLOR_EMPTY);
-                        printf("𝧜 "); // don't know if this one works
+                        printf("◈ "); // don't know if this one works
                         break;
                     case CASE_MONSTER_TROLL:
                         platform_color_change(COLOR_RED, COLOR_EMPTY);
-                        printf("🧌 "); // don't know if this one works
+                        printf("◍ "); // don't know if this one works
                         break;
 
                         // different type of player spawn
