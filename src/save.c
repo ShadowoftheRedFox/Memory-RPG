@@ -18,6 +18,16 @@ b8 save_file_exists(const char *path) {
     return true;
 }
 
+/*
+TODO save multiple game instances:
+unique number for new game save -> when saving, remember that number in a variable
+-> unique number with time(); see how to get current time
+when deleting save, delete while searching the name -> add a delete save in menu options
+when loading, ask for which save to load, by showing which player there are in each game and how many round has been played,
+and when he has been created
+^If there is o bug after the test on linux
+*/
+
 // delete the save file after the party has ended
 b8 remove_save() {
     return remove(SAVE_FOLDER SAVE_FILE_NAME);
