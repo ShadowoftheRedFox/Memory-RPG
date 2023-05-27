@@ -68,9 +68,10 @@ We use a dynamic array for loading saves and scores. There is no limitation abou
 
 The number generated for the save ID are random, between 0 and 1 000 000. With bad luck, you can create the same number and override and old game.
 
+The numbers are stocked in a number.save file, saved in structs. We don't delete the struct if the save is deleted, we just replace it if we create a new game, because there might be other struct after to "move up" in the file. So nothing is deleted, just waiting to be replaced.
+
 ## Preview
 
-<!-- TODO ad a preview of the game -->
 ![Preview images](./images/Choose_weapon.png)
 ![Preview images](./images/End.png)
 

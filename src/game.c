@@ -2,8 +2,6 @@
 #include "./menu.h"
 #include "./platform.h"
 
-// TODO add sleep and console clear, print animation like ori
-
 Board_Case **map_create() {
     // here malloc(size); = platform_allocate(size);
     // we alloc columns here
